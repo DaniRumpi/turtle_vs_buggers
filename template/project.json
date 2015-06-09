@@ -1,6 +1,6 @@
 {
     "debugMode" : 1,
-    "noCache": false,
+    "noCache": true,
     "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
@@ -12,6 +12,7 @@
     "jsList" : [
         "src/resource.js",
         "src/playerSprite.js",
+        "src/monsterSprite.js",
         "src/myApp.js"
     ]
 }

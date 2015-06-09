@@ -4,6 +4,8 @@ cc.game.onStart = function(){
 
     var designSize = cc.size(800, 480);//cc.size(480, 800);
     var screenSize = cc.view.getFrameSize();
+    
+    cc.SPRITE_DEBUG_DRAW =  1;
 
     if(!cc.sys.isNative && screenSize.height < 800){
         designSize = cc.size(800, 480); //cc.size(320, 480);
