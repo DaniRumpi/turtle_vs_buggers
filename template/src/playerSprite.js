@@ -1,4 +1,4 @@
-var playerSprite = cc.Sprite.extend({
+var PlayerSprite = cc.Sprite.extend({
   _currentRotation: 0,
   _key_up: false,
   _key_left: false,
@@ -7,6 +7,9 @@ var playerSprite = cc.Sprite.extend({
   update: function (dt) {
     this.move();
     this.setRotation(this._currentRotation);
+  },
+  getCurrentRotation: function() {
+    return this._currentRotation;
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
@@ -24,10 +27,10 @@ var playerSprite = cc.Sprite.extend({
   },
   move: function () {
     if (this._key_left && !this._key_right) {
-      this._currentRotation -= 4;
+      this._currentRotation -= 2;
     }
     else if (this._key_right && !this._key_left) {
-      this._currentRotation += 4;
+      this._currentRotation += 2;
     }
 
     if (this._currentRotation < 0) { this._currentRotation = 360; }
@@ -41,7 +44,7 @@ var playerSprite = cc.Sprite.extend({
       }
       else if (this._key_down && !this._key_up) {
         x = 0;
-        y = -1;
+        y = -0.5;
       } else {
         return;
       }
