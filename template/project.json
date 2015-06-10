@@ -13,6 +13,7 @@
         "src/resource.js",
         "src/playerSprite.js",
         "src/monsterSprite.js",
+        "src/projectileSprite.js",
         "src/myApp.js"
     ]
 }

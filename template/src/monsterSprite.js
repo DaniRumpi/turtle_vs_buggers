@@ -5,7 +5,6 @@ var MonsterSprite = cc.Sprite.extend({
   _key_right: false,
   _key_down: false,
   onEnter: function() {
-    cc.log("init! monster", this.getScale());
     this._super();
     this.setScale(0.4);
     this.setPosition(cc.p(_size.width/2, _size.height/2));
@@ -39,7 +38,5 @@ var MonsterSprite = cc.Sprite.extend({
       this.moving = false;
     }, this);
     this.runAction(cc.Sequence.create(actionMove, actionMoveDone));
-  },
-  updateMove: function() {
   }
 });

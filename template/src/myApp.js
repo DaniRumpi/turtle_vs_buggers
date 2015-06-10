@@ -29,8 +29,8 @@ var MyLayer = cc.Layer.extend({
       projectile = this._projectiles[i];
       for (j = this._monsters.length - 1; j >= 0; j--) {
         monster = this._monsters[j];
-        projectileP = projectile.getPosition();
-        monsterP = monster.getPosition();
+        projectileP = projectile._position;
+        monsterP = monster._position;
         if (cc.pDistance(projectileP, monsterP) <= monster._ratio) {
           cc.log("collision!");
           monster.stopAllActions();
@@ -45,9 +45,8 @@ var MyLayer = cc.Layer.extend({
     _player.handleKey(e, true);
   },
   onKeyReleased: function(e) {
-    // cc.log(e);
     if (e === cc.KEY.space) {
-      _shoot(_layer, _player.getPosition(), _player.getRotation());
+      _shoot();
     } else {
       _player.handleKey(e);
     }
@@ -57,36 +56,18 @@ var MyLayer = cc.Layer.extend({
     this.addChild(this._player, 0);
   },
   addMonster: function() {
-    _monster= this._monster = new MonsterSprite(res.bugger);
+    _monster = this._monster = new MonsterSprite(res.bugger);
     this._monsters.push(_monster);
     this.addChild(this._monster, 1);
   },
   gameLogic: function(dt) {
     this.addMonster();
   },
-  shoot: function(context, origin, angle) {
-    // Set up initial location of the projectile
-    var projectile = cc.Sprite.create(res.projectile);
-    projectile.setPosition(origin.x, origin.y);
-    projectile.setRotation(angle);
- 
-    var x = 0, y = _size.width;
-    var aim = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(angle));
-
-    // Move projectile to actual endpoint
-    projectile.runAction(cc.Sequence.create(
-      cc.MoveBy.create(1, aim),
-      cc.CallFunc.create(function(node) {
-        var index = context._projectiles.indexOf(node);
-        context._projectiles.splice(index, 1);
-      }, this),
-      cc.RemoveSelf.create(true)
-    ));
- 
-    // Add to array
-    projectile.setTag(2);
-    context._projectiles.push(projectile);
-    context.addChild(projectile, 2);
+  shoot: function() {
+    var projectile = new ProjectileSprite(res.projectile);
+    projectile.run(_layer, _player);
+    _layer._projectiles.push(projectile);
+    _layer.addChild(projectile, 2);
   },
 });
 
@@ -97,5 +78,7 @@ var MyScene = cc.Scene.extend({
     _layer = new MyLayer();
     this.addChild(_layer);
     _layer.init();
+    var colorLayer = new cc.LayerColor(cc.color(255,255,255), _size.width, _size.height);
+    this.addChild(colorLayer, -1);
   }
 });

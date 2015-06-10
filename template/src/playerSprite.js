@@ -1,17 +1,12 @@
 var PlayerSprite = cc.Sprite.extend({
-  _key_up: false,
-  _key_left: false,
-  _key_right: false,
-  _key_down: false,
   onEnter: function() {
     this._super();
-    this.setPosition(cc.p(_size.width/2, _size.height/2));
     this.setScale(0.5);
+    this.setPosition(cc.p(_size.width/2, _size.height/2));
     this.scheduleUpdate();
   },
   update: function (dt) {
     this.move();
-    // this.setRotation(this.rotation);
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
@@ -46,16 +41,12 @@ var PlayerSprite = cc.Sprite.extend({
       }
       else if (this._key_down && !this._key_up) {
         x = 0;
-        y = -0.8;
+        y = -1;
       } else {
         return;
       }
-      // angle = this.rotation * Math.PI / 180; // radians
-      // x2 = - y * Math.sin(-angle);
-      // y2 = y * Math.cos(-angle);
       var pRot = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(this.rotation));
-      this.runAction(cc.MoveBy.create(0, pRot));
-      this.runAction(cc.MoveBy.create(0, pRot));
+      this.setPosition(cc.pAdd(this._position, pRot));
     }
   }
 });
