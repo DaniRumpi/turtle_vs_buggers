@@ -1,6 +1,6 @@
 var MonsterSprite = cc.Sprite.extend({
   _currentRotation: 0,
-  isMoving: false,
+  moving: false,
   speed: 70.0,
   _key_right: false,
   _key_down: false,
@@ -8,47 +8,39 @@ var MonsterSprite = cc.Sprite.extend({
     cc.log("init! monster", this.getScale());
     this._super();
     this._ratio = this.getContentSize().width * this.getScale() / 2.3;
+    this.setPosition(cc.p(_size.width/2, _size.height/2));
+    this.setScale(0.4);
+    this.scheduleUpdate();
   },
   update: function (dt) {
-    if (!this.isMoving) {
+    if (!this.moving) {
       this.getAim();
       this.setRotationAim();
       this.move();
     }
   },
   getAim: function() {
-    // Update Params
-    this._aimX = parseInt(Math.random() * 800);
-    this._aimY = parseInt(Math.random() * 480);
+    this._aimX = parseInt(Math.random() * _size.width);
+    this._aimY = parseInt(Math.random() * _size.height);
   },
   setRotationAim: function() {
-    var pos = this.getPosition();
+    var pos = this._position;
     var angle = Math.atan2(this._aimX - pos.x, this._aimY - pos.y);
-
-    angle = angle * (180 / Math.PI);
-    this._currentRotation = angle;
-
-    this.setRotation(this._currentRotation);
+    this.rotation = cc.radiansToDegrees(angle);
   },
   move: function () {
-    this.isMoving = true;
-    var pos = this.getPosition();
+    this.moving = true;
+    var pos = this._position;
     var aim = cc.p(this._aimX, this._aimY);
     var dist = cc.pDistance(aim, pos);
     var time = dist / this.speed;
     var actionMove = cc.MoveTo.create(time, aim);
     var actionMoveDone = cc.CallFunc.create(function(node) {
-      this.isMoving = false;
+      this.moving = false;
     }, this);
-    _monster.runAction(cc.Sequence.create(actionMove, actionMoveDone));
+    this.runAction(cc.Sequence.create(actionMove, actionMoveDone));
   },
   updateMove: function() {
-    // this._aimX = parseInt(Math.random() * 400);
-    // this._aimY = parseInt(Math.random() * 320);
-    // var angle = Math.atan2(this._aimX - 400, this._aimY - 320);
-
-    // angle = angle * (180 / Math.PI);
-    // this._currentRotation = angle;
   }
 });
 

@@ -1,15 +1,17 @@
 var PlayerSprite = cc.Sprite.extend({
-  _currentRotation: 0,
   _key_up: false,
   _key_left: false,
   _key_right: false,
   _key_down: false,
+  onEnter: function() {
+    this._super();
+    this.setPosition(cc.p(_size.width/2, _size.height/2));
+    this.setScale(0.5);
+    this.scheduleUpdate();
+  },
   update: function (dt) {
     this.move();
-    this.setRotation(this._currentRotation);
-  },
-  getCurrentRotation: function() {
-    return this._currentRotation;
+    // this.setRotation(this.rotation);
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
@@ -27,32 +29,33 @@ var PlayerSprite = cc.Sprite.extend({
   },
   move: function () {
     if (this._key_left && !this._key_right) {
-      this._currentRotation -= 2;
+      this.rotation -= 2;
     }
     else if (this._key_right && !this._key_left) {
-      this._currentRotation += 2;
+      this.rotation += 2;
     }
 
-    if (this._currentRotation < 0) { this._currentRotation = 360; }
-    if (this._currentRotation > 360) { this._currentRotation = 0; }
+    if (this.rotation < 0) { this.rotation = 360; }
+    if (this.rotation > 360) { this.rotation = 0; }
 
     if (this._key_up || this._key_down) {
-      var angle, x, y, x2, y2;
+      var x, y;
       if (this._key_up && !this._key_down) {
         x = 0;
         y = 2;
       }
       else if (this._key_down && !this._key_up) {
         x = 0;
-        y = -0.5;
+        y = -0.8;
       } else {
         return;
       }
-      angle = this._currentRotation * Math.PI / 180; // radians
-      x2 = - y * Math.sin(-angle);
-      y2 = y * Math.cos(-angle);
-      this.runAction(cc.MoveBy.create(0, cc.p(x2, y2)));
-      this.runAction(cc.MoveBy.create(0, cc.p(x2, y2)));
+      // angle = this.rotation * Math.PI / 180; // radians
+      // x2 = - y * Math.sin(-angle);
+      // y2 = y * Math.cos(-angle);
+      var pRot = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(this.rotation));
+      this.runAction(cc.MoveBy.create(0, pRot));
+      this.runAction(cc.MoveBy.create(0, pRot));
     }
   }
 });
