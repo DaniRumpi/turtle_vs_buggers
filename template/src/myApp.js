@@ -20,10 +20,8 @@ var MyLayer = cc.Layer.extend({
     }
     this.schedule(this.update);
   },
-  collision: function(dt) {
-    this.collision(dt);
-  },
   update: function (dt) {
+    // collision
     var i, j, projectile, monster, projectileP, monsterP;
     for (i = this._projectiles.length - 1; i >= 0; i--) {
       projectile = this._projectiles[i];
