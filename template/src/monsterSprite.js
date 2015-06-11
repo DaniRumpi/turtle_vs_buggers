@@ -1,14 +1,23 @@
-var MonsterSprite = cc.Sprite.extend({
+var MonsterSprite = cc.PhysicsSprite.extend({
   _currentRotation: 0,
   moving: false,
   speed: 70.0,
   _key_right: false,
   _key_down: false,
-  onEnter: function() {
-    this._super();
-    this.setScale(0.4);
-    this.setPosition(cc.p(_size.width/2, _size.height/2));
-    this._ratio = this.getContentSize().width * this.getScale() / 2.3;
+  setup: function(space) {
+    this.scale = 0.4;
+    this.position = cc.p(_size.width/2, _size.height/2);
+    this.$width = this.width * this.scale;
+    this.$height = this.height * this.scale;
+    this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
+    this.$body.p = this.position;
+    this.$shape = new cp.BoxShape(this.$body, this.$width -16, this.$height);
+    space.addBody(this.$body);
+    space.addShape(this.$shape);
+    this.setBody(this.$body);
+
+    this.setPosition(this.position);
+    this._ratio = this.$width / 2.3;
     this.scheduleUpdate();
   },
   update: function (dt) {

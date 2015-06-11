@@ -7,7 +7,7 @@
     "renderMode" : 0,
     "engineDir":"../",
 
-    "modules" : ["cocos2d", "chipmunk"],
+    "modules" : ["cocos2d", "physics", "chipmunk"],
 
     "jsList" : [
         "src/resource.js",

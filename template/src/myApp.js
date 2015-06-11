@@ -1,11 +1,33 @@
+function addWallsAndGround(space) {
+  leftWall = new cp.SegmentShape(space.staticBody, new cp.v(0, 0), new cp.v(0, _size.height), WALLS_WIDTH);
+  leftWall.setElasticity(WALLS_ELASTICITY);
+  leftWall.setFriction(WALLS_FRICTION);
+  space.addStaticShape(leftWall);
+
+  rightWall = new cp.SegmentShape(space.staticBody, new cp.v(_size.width, _size.height), new cp.v(_size.width, 0), WALLS_WIDTH);
+  rightWall.setElasticity(WALLS_ELASTICITY);
+  rightWall.setFriction(WALLS_FRICTION);
+  space.addStaticShape(rightWall);
+
+  bottomWall = new cp.SegmentShape(space.staticBody, new cp.v(0, 0), new cp.v(_size.width, 0), WALLS_WIDTH);
+  bottomWall.setElasticity(WALLS_ELASTICITY);
+  bottomWall.setFriction(WALLS_FRICTION);
+  space.addStaticShape(bottomWall);
+
+  upperWall = new cp.SegmentShape(space.staticBody, new cp.v(0, _size.height), new cp.v(_size.width, _size.height), WALLS_WIDTH);
+  upperWall.setElasticity(WALLS_ELASTICITY);
+  upperWall.setFriction(WALLS_FRICTION);
+  space.addStaticShape(upperWall);
+}
+
 var MyLayer = cc.Layer.extend({
-  sprite:null,
+  space: null,
   _player: null,
   _monsters: [],
   _projectiles:[],
   init:function () {
     this._super(); // 1. super init first
-    _size = _designSize; // Global variable _designSize
+    this.initPhysics();
 
     this.gameLogic();
     this.addPlayer();
@@ -20,7 +42,14 @@ var MyLayer = cc.Layer.extend({
     }
     this.schedule(this.update);
   },
+  // init space of chipmunk
+  initPhysics: function() {
+    this.space = new cp.Space();
+    this.space.gravity = cp.v(0, 0);
+    addWallsAndGround(this.space);
+  },
   update: function (dt) {
+    this.space.step(dt);
     // collision
     var i, j, projectile, monster, projectileP, monsterP;
     for (i = this._projectiles.length - 1; i >= 0; i--) {
@@ -30,7 +59,6 @@ var MyLayer = cc.Layer.extend({
         projectileP = projectile._position;
         monsterP = monster._position;
         if (cc.pDistance(projectileP, monsterP) <= monster._ratio) {
-          cc.log("collision!");
           monster.stopAllActions();
           projectile.removeFromParent();
           this._projectiles.splice(i, 1);
@@ -51,10 +79,25 @@ var MyLayer = cc.Layer.extend({
   },
   addPlayer: function() {
     _player = this._player = new PlayerSprite(res.mainPlayer);
+    this._player.setup(this.space);
     this.addChild(this._player, 0);
+    // this.sprite = new cc.PhysicsSprite(res.mainPlayer);
+    // var contentSize = this.sprite.getContentSize();
+    // this.body = new cp.Body(1, cp.momentForBox(1, contentSize.width, contentSize.height));
+    // this.body.p = cc.p(200, 200);
+    // this.body.applyImpulse(cp.v(100, 0), cp.v(0, 0));
+    // this.space.addBody(this.body);
+    // //6. create the shape for the body
+    // this.shape = new cp.BoxShape(this.body, contentSize.width - 14, contentSize.height);
+    // //7. add shape to space
+    // this.space.addShape(this.shape);
+    // //8. set body to the physic sprite
+    // this.sprite.setBody(this.body);
+    // this.addChild(this.sprite);
   },
   addMonster: function() {
     _monster = this._monster = new MonsterSprite(res.bugger);
+    this._monster.setup(this.space);
     this._monsters.push(_monster);
     this.addChild(this._monster, 1);
   },
