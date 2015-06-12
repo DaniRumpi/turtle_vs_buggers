@@ -14,6 +14,7 @@
         "src/playerSprite.js",
         "src/monsterSprite.js",
         "src/projectileSprite.js",
+        "src/explosion.js",
         "src/myApp.js"
     ]
 }

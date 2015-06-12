@@ -25,6 +25,7 @@ var MyLayer = cc.Layer.extend({
   _player: null,
   _monsters: [],
   _projectiles:[],
+  _explosions: null,
   init:function () {
     this._super(); // 1. super init first
     this.initPhysics();
@@ -32,6 +33,21 @@ var MyLayer = cc.Layer.extend({
     this.gameLogic();
     this.addPlayer();
     _shoot = this.shoot;
+    
+    
+    // Explosions
+    // cc.spriteFrameCache.addSpriteFrames(res.explosion_plist);
+    // var explosionTexture = cc.textureCache.addImage(res.explosion_png);
+    // // Adds a sprite batch node.
+    // this._explosions = new cc.SpriteBatchNode(explosionTexture);
+    // this._explosions.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
+    // // Adds spriteSheet in this layer.
+    // this.addChild(this._explosions, 5);
+    // this.sharedExplosion();
+    // this.preSetExplosion();
+    // this.playExplosions();
+    
+    preCacheExplosions(this);
 
     if (cc.sys.capabilities.hasOwnProperty('keyboard')) {
       cc.eventManager.addListener({
@@ -110,6 +126,39 @@ var MyLayer = cc.Layer.extend({
     _layer._projectiles.push(projectile);
     _layer.addChild(projectile, 2);
   },
+  addExplosions: function (explosion) {
+    this.addChild(explosion, 3);
+  },
+  sharedExplosion: function () {
+    var animFrames = [];
+    var str = '';
+    for (var i = 1; i < 35; i++) {
+      str = 'explosion_' + (i < 10 ? ('0' + i) : i) + '.png';
+      var frame = cc.spriteFrameCache.getSpriteFrame(str);
+      animFrames.push(frame);
+    }
+    var animation = new cc.Animation(animFrames, 0.04);
+    cc.animationCache.addAnimation(animation, 'Explosion');
+  },
+  // createExplosion: function () {
+  //   var explosion = new Explosion();
+  //   _layer.addExplosions(explosion);
+  //   EXPLOSIONS.push(explosion);
+  //   return explosion;
+  // },
+  preSetExplosion: function () {
+    var explosion = null, i;
+    for (i = 5; i >= 0; i--) {
+      explosion = new Explosion();
+      EXPLOSIONS.push(explosion);
+    }
+  },
+  playExplosions: function () {
+    for (i = 5; i >= 0; i--) {
+      _layer.addChild(EXPLOSIONS[i]);
+      EXPLOSIONS[i].play();
+    }
+  }
 });
 
 var _layer;
@@ -119,7 +168,7 @@ var MyScene = cc.Scene.extend({
     _layer = new MyLayer();
     this.addChild(_layer);
     _layer.init();
-    var colorLayer = new cc.LayerColor(cc.color(255,255,255), _size.width, _size.height);
+    var colorLayer = new cc.LayerColor(cc.color(0,0,0), _size.width, _size.height);
     this.addChild(colorLayer, -1);
   }
 });

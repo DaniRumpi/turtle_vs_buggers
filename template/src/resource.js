@@ -11,7 +11,9 @@ var res = {
   s_closeSelected: s_CloseSelected,
   mainPlayer: "turtle.png",
   bugger: "bugger.png",
-  projectile: "projectile.png"
+  projectile: "projectile.png",
+  explosion_png: "explosion.png",
+  explosion_plist: "explosion.plist"
 }
 
 var g_resources = [
@@ -20,5 +22,7 @@ var g_resources = [
     s_CloseSelected,
     s_mainPlayer,
     s_bugger,
-    s_projectile
+    s_projectile,
+    res.explosion_png,
+    res.explosion_plist
 ];
