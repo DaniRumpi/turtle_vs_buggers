@@ -10,7 +10,7 @@ cc.game.onStart = function(){
   _size = cc.size(800, 480);
   var screenSize = cc.view.getFrameSize();
   
-  cc.SPRITE_DEBUG_DRAW =  1;
+  cc.SPRITE_DEBUG_DRAW =  0;
 
   if (!cc.sys.isNative && screenSize.height < 800) {
     _size = cc.size(800, 480);

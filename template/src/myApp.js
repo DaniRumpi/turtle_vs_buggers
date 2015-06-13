@@ -40,16 +40,10 @@ var MyLayer = cc.Layer.extend({
       }, this);
     }
     this.schedule(this.update);
-    // this.schedule(this.gameLogic, 3, 3);
+    this.schedule(this.gameLogic, 3, 3);
     this.gameLogic();
     
-    // add a "close" icon to exit the progress. it's an autorelease object
-    var closeItem = new cc.MenuItemImage(res.CloseNormal_png, res.CloseSelected_png, this.onQuit);
-    closeItem.setPosition(cc.p(_size.width - 20, _size.height - 20));
-    closeItem.setAnchorPoint(cc.p(0.5, 0.5));
-    var menu = new cc.Menu(closeItem);
-    menu.setPosition(cc.p());
-    this.addChild(menu, 4);
+    this.addQuitMenuItem();
   },
   // init space of chipmunk
   initPhysics: function() {
@@ -74,6 +68,10 @@ var MyLayer = cc.Layer.extend({
           break;
         }
       }
+    }
+    if (!this._monsters.length) {
+      console.log('Winner');
+      this.gameOver();
     }
   },
   onKeyPressed: function(e) {
@@ -111,8 +109,22 @@ var MyLayer = cc.Layer.extend({
   gameLogic: function(dt) {
     this.addMonster();
   },
+  addQuitMenuItem: function() {
+    // add a "close" icon to exit the game
+    var closeItem = new cc.MenuItemImage(res.CloseNormal_png, res.CloseSelected_png, this.onQuit);
+    closeItem.setPosition(cc.p(_size.width - 20, _size.height - 20));
+    closeItem.setAnchorPoint(cc.p(0.5, 0.5));
+    var menu = new cc.Menu(closeItem);
+    menu.setPosition(cc.p());
+    this.addChild(menu, 4);
+  },
   onQuit: function() {
     cc.director.runScene(new SysMenu());
+  },
+  gameOver: function() {
+    this.unscheduleAllCallbacks();
+    this._player.unscheduleAllCallbacks();
+    // cc.director.runScene(new SysMenu());
   }
 });
 

@@ -11,12 +11,17 @@ function preCacheExplosions(layer) {
   // sharedExplosion
   var animFrames = [];
   var str = '';
-  for (var i = 1; i < 35; i++) {
-    str = 'explosion_' + (i < 10 ? ('0' + i) : i) + '.png';
+  // for (var i = 1; i < 35; i++) {
+  //   str = 'explosion' + (i < 10 ? ('0' + i) : i) + '.png';
+  //   var frame = cc.spriteFrameCache.getSpriteFrame(str);
+  //   animFrames.push(frame);
+  // }
+  for (var i = 1; i < 12; i++) {
+    str = 'explosion' + i + '.png';
     var frame = cc.spriteFrameCache.getSpriteFrame(str);
     animFrames.push(frame);
   }
-  var animation = new cc.Animation(animFrames, 0.04);
+  var animation = new cc.Animation(animFrames, 0.06);
   cc.animationCache.addAnimation(animation, 'Explosion');
 
 }
@@ -24,7 +29,7 @@ function preCacheExplosions(layer) {
 var Explosion = cc.Sprite.extend({
   active: true,
   ctor: function () {
-    var pFrame = cc.spriteFrameCache.getSpriteFrame('explosion_01.png');
+    var pFrame = cc.spriteFrameCache.getSpriteFrame('explosion1.png');
     this._super(pFrame);
     this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
     this.animation = cc.animationCache.getAnimation('Explosion');

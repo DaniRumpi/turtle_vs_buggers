@@ -49,13 +49,13 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._aimY = parseInt(cc.random0To1() * _size.height);
   },
   setRotationAim: function() {
-    var pos = this._position;
+    var pos = this.position;
     var angle = Math.atan2(this._aimX - pos.x, this._aimY - pos.y);
     this.rotation = cc.radiansToDegrees(angle);
   },
   move: function () {
     this.moving = true;
-    var pos = this._position;
+    var pos = this.position;
     var aim = cc.p(this._aimX, this._aimY);
     var dist = cc.pDistance(aim, pos);
     var time = dist / this.speed;
