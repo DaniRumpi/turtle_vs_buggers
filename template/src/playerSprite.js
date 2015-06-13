@@ -12,6 +12,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.setBody(this.$body);
 
     this.setPosition(this.position);
+    this.setRandomRotation();
     this.scheduleUpdate();
   },
   update: function (dt) {
@@ -57,5 +58,8 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       var pRot = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(this.rotation));
       this.setPosition(cc.pAdd(this._position, pRot));
     }
+  },
+  setRandomRotation: function() {
+    this.rotation = parseInt(cc.random0To1() * 360);
   }
 });

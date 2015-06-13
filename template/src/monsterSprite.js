@@ -1,9 +1,9 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
   moving: false,
   speed: 70.0,
-  scale: 0.4,
   setup: function(space) {
-    this.position = cc.p(_size.width/2, _size.height/2);
+    this.scale = 0.4;
+    this.setRandomPosition();
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
@@ -31,9 +31,22 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     _layer.space.removeShape(this.$shape);
     _layer.space.removeBody(this.$body);
   },
+  setRandomPosition: function() {
+    var _posX, _posY, _pos, _middle;
+    _middle = cc.p(_size.width/2, _size.height/2);
+    while (true) {
+      _posX = parseInt(cc.random0To1() * _size.width);
+      _posY = parseInt(cc.random0To1() * _size.height);
+      _pos = cc.p(_posX, _posY);
+      if (cc.pDistance(_pos, _middle) > 150) {
+        break;
+      }
+    }
+    this.position = _pos;
+  },
   getAim: function() {
-    this._aimX = parseInt(Math.random() * _size.width);
-    this._aimY = parseInt(Math.random() * _size.height);
+    this._aimX = parseInt(cc.random0To1() * _size.width);
+    this._aimY = parseInt(cc.random0To1() * _size.height);
   },
   setRotationAim: function() {
     var pos = this._position;

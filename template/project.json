@@ -1,20 +1,21 @@
 {
-    "debugMode" : 1,
-    "noCache": true,
-    "showFPS" : true,
-    "frameRate" : 60,
-    "id" : "gameCanvas",
-    "renderMode" : 0,
-    "engineDir":"../",
+  "debugMode" : 1,
+  "noCache": true,
+  "showFPS" : true,
+  "frameRate" : 60,
+  "id" : "gameCanvas",
+  "renderMode" : 0,
+  "engineDir":"../",
 
-    "modules" : ["cocos2d", "physics", "chipmunk"],
+  "modules" : ["cocos2d", "physics", "chipmunk"],
 
-    "jsList" : [
-        "src/resource.js",
-        "src/playerSprite.js",
-        "src/monsterSprite.js",
-        "src/projectileSprite.js",
-        "src/explosion.js",
-        "src/myApp.js"
-    ]
+  "jsList" : [
+    "src/resource.js",
+    "src/playerSprite.js",
+    "src/monsterSprite.js",
+    "src/projectileSprite.js",
+    "src/explosion.js",
+    "src/sysMenu.js",
+    "src/myApp.js"
+  ]
 }

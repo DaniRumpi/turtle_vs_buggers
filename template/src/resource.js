@@ -7,8 +7,8 @@ var s_projectile = "projectile.png";
 
 var res = {
   helloWorld: s_HelloWorld,
-  closeNormal: s_CloseNormal,
-  s_closeSelected: s_CloseSelected,
+  CloseNormal_png: s_CloseNormal,
+  CloseSelected_png: s_CloseSelected,
   mainPlayer: "turtle.png",
   bugger: "bugger.png",
   projectile: "projectile.png",

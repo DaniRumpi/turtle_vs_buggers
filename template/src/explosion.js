@@ -1,5 +1,3 @@
-EXPLOSIONS = [];
-
 function preCacheExplosions(layer) {
   // Explosions
   cc.spriteFrameCache.addSpriteFrames(res.explosion_plist);
@@ -8,7 +6,7 @@ function preCacheExplosions(layer) {
   layer._explosions = new cc.SpriteBatchNode(explosionTexture);
   layer._explosions.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
   // Adds spriteSheet in this layer.
-  layer.addChild(layer._explosions, 5);
+  layer.addChild(layer._explosions, 3);
   
   // sharedExplosion
   var animFrames = [];
@@ -24,19 +22,12 @@ function preCacheExplosions(layer) {
 }
 
 var Explosion = cc.Sprite.extend({
-  // tmpWidth: 0,
-  // tmpHeight: 0,
   active: true,
-  // animation: null,
   ctor: function () {
     var pFrame = cc.spriteFrameCache.getSpriteFrame('explosion_01.png');
     this._super(pFrame);
     this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
-
-    // this.tmpWidth = this.width;
-    // this.tmpHeight = this.height;
     this.animation = cc.animationCache.getAnimation('Explosion');
-    //this.setPosition(cc.p(200,200));
   },
   play: function (position) {
     position && this.setPosition(position);
