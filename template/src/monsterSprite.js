@@ -1,5 +1,4 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
-  moving: false,
   speed: 70.0,
   setup: function(space) {
     this.scale = 0.4;
@@ -9,20 +8,19 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -16, this.$height);
+    this.$shape.setCollisionType(2);
     space.addBody(this.$body);
     space.addShape(this.$shape);
     this.setBody(this.$body);
 
     this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
-    this.scheduleUpdate();
+    this.scheduleOnce(this.update);
   },
   update: function(dt) {
-    if (!this.moving) {
       this.getAim();
       this.setRotationAim();
       this.move();
-    }
   },
   destroy: function() {
     this.stopAllActions();
@@ -54,15 +52,22 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.rotation = cc.radiansToDegrees(angle);
   },
   move: function () {
-    this.moving = true;
     var pos = this.position;
     var aim = cc.p(this._aimX, this._aimY);
     var dist = cc.pDistance(aim, pos);
     var time = dist / this.speed;
     var actionMove = cc.MoveTo.create(time, aim);
     var actionMoveDone = cc.CallFunc.create(function(node) {
-      this.moving = false;
+      this.update();
     }, this);
     this.runAction(cc.Sequence.create(actionMove, actionMoveDone));
+  },
+  run: function() {
+    var actionUpdate = cc.CallFunc.create(function(node) {
+      node.update();
+    }, this);
+    var actionMove = cc.MoveTo.create(this._time, this._aim);
+    var sequence = cc.Sequence.create(actionMove, actionUpdate);
+    this.runAction(cc.RepeatForever.create(sequence));
   }
 });

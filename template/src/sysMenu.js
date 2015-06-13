@@ -33,7 +33,7 @@ var SysMenu = cc.Layer.extend({
     // cc.director.runScene(new cc.TransitionFade(1.2, scene));
   },
   onAbout: function () {
-    cc.director.runScene(new cc.TransitionFade(1, new About()));
+    cc.director.runScene(new cc.TransitionFade(0.5, new About()));
     // this.onButtonEffect();
     // var scene = new cc.Scene();
     // scene.addChild(new AboutLayer());

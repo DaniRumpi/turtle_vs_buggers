@@ -1,4 +1,5 @@
 var PlayerSprite = cc.PhysicsSprite.extend({
+  _monstersDestroyed: 0,
   setup: function(space) {
     this.scale = 0.5;
     this.position = cc.p(_size.width/2, _size.height/2);
@@ -7,6 +8,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -10, this.$height);
+    this.$shape.setCollisionType(1);
     space.addBody(this.$body);
     space.addShape(this.$shape);
     this.setBody(this.$body);

@@ -10,12 +10,14 @@
   "modules" : ["cocos2d", "physics", "chipmunk"],
 
   "jsList" : [
+    "src/_config.js",
     "src/resource.js",
     "src/playerSprite.js",
     "src/monsterSprite.js",
     "src/projectileSprite.js",
     "src/explosion.js",
     "src/sysMenu.js",
-    "src/myApp.js"
+    "src/gameOver.js",
+    "src/game.js"
   ]
 }

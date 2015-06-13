@@ -19,6 +19,10 @@ function preCacheExplosions(layer) {
   for (var i = 1; i < 12; i++) {
     str = 'explosion' + i + '.png';
     var frame = cc.spriteFrameCache.getSpriteFrame(str);
+    // TintBy
+    // var sprite_action = cc.TintBy.create(2, -127, -255, -127);
+    // var repeat_action = cc.Repeat.create(sprite_action, 3);
+    // frame.runAction(repeat_action);
     animFrames.push(frame);
   }
   var animation = new cc.Animation(animFrames, 0.06);
@@ -33,6 +37,10 @@ var Explosion = cc.Sprite.extend({
     this._super(pFrame);
     this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
     this.animation = cc.animationCache.getAnimation('Explosion');
+    
+    // var sprite_action = cc.TintBy.create(2, -127, -255, -127);
+    // var repeat_action = cc.Repeat.create(sprite_action, 3);
+    // this.animation.runAction(repeat_action);
   },
   play: function (position) {
     position && this.setPosition(position);

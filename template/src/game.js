@@ -63,15 +63,14 @@ var MyLayer = cc.Layer.extend({
           this.addExplosion(monster._position);
           this._projectiles.splice(i, 1);
           this._monsters.splice(j, 1);
-          projectile.removeFromParent();
+          projectile.destroy();
           monster.destroy();
           break;
         }
       }
     }
-    if (!this._monsters.length) {
-      console.log('Winner');
-      this.gameOver();
+    if (this._player._monstersDestroyed >= GAME.LEVELS[0].MONSTERS.length) {
+      this.gameOver(true);
     }
   },
   onKeyPressed: function(e) {
@@ -124,7 +123,10 @@ var MyLayer = cc.Layer.extend({
   gameOver: function() {
     this.unscheduleAllCallbacks();
     this._player.unscheduleAllCallbacks();
-    // cc.director.runScene(new SysMenu());
+    for (i = this._monsters.length - 1; i >= 0; i--) {
+      this._monsters[i].unscheduleAllCallbacks();
+    }
+    cc.director.runScene(new cc.TransitionFade(2, GameOver.newScene(true)));
   }
 });
 
