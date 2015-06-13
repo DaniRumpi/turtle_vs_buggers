@@ -1,11 +1,8 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
-  _currentRotation: 0,
   moving: false,
   speed: 70.0,
-  _key_right: false,
-  _key_down: false,
+  scale: 0.4,
   setup: function(space) {
-    this.scale = 0.4;
     this.position = cc.p(_size.width/2, _size.height/2);
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
@@ -20,12 +17,19 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._ratio = this.$width / 2.3;
     this.scheduleUpdate();
   },
-  update: function (dt) {
+  update: function(dt) {
     if (!this.moving) {
       this.getAim();
       this.setRotationAim();
       this.move();
     }
+  },
+  destroy: function() {
+    this.stopAllActions();
+    this.removeAllChildrenWithCleanup();
+    this.removeFromParent();
+    _layer.space.removeShape(this.$shape);
+    _layer.space.removeBody(this.$body);
   },
   getAim: function() {
     this._aimX = parseInt(Math.random() * _size.width);
