@@ -1,11 +1,11 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
-  speed: 70.0,
+  _speed: 70.0,
   _power: 1,
   setup: function(space) {
     this.scale = 0.4;
-    this.setRandomPosition();
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
+    this.setRandomPosition();
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -16, this.$height);
@@ -17,7 +17,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._color = this.color;
     this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
-    this.scheduleOnce(this.update);
+    this.update();
   },
   update: function(dt) {
       this.getAim();
@@ -35,10 +35,10 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     var _posX, _posY, _pos, _middle;
     _middle = cc.p(_size.width/2, _size.height/2);
     while (true) {
-      _posX = parseInt(cc.random0To1() * _size.width);
-      _posY = parseInt(cc.random0To1() * _size.height);
+      _posX = parseInt(cc.random0To1() * (_size.width - this.$width)) + this.$width / 2;
+      _posY = parseInt(cc.random0To1() * (_size.height - this.$height)) + this.$height / 2;
       _pos = cc.p(_posX, _posY);
-      if (cc.pDistance(_pos, _middle) > 150) {
+      if (cc.pDistance(_pos, _middle) > 100) {
         break;
       }
     }
@@ -57,19 +57,11 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     var pos = this.position;
     var aim = cc.p(this._aimX, this._aimY);
     var dist = cc.pDistance(aim, pos);
-    var time = dist / this.speed;
+    var time = dist / this._speed;
     var actionMove = cc.MoveTo.create(time, aim);
     var actionMoveDone = cc.CallFunc.create(function(node) {
       this.update();
     }, this);
     this.runAction(cc.Sequence.create(actionMove, actionMoveDone));
-  },
-  run: function() {
-    var actionUpdate = cc.CallFunc.create(function(node) {
-      node.update();
-    }, this);
-    var actionMove = cc.MoveTo.create(this._time, this._aim);
-    var sequence = cc.Sequence.create(actionMove, actionUpdate);
-    this.runAction(cc.RepeatForever.create(sequence));
   }
 });

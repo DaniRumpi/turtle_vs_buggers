@@ -15,7 +15,9 @@ var SysMenu = cc.Layer.extend({
     this.addChild(menu);
   },
   onNewGame: function () {
+    cc.log('new Game');
     cc.director.runScene(new cc.TransitionFade(1, new Game()));
+    cc.log('OK');
     //load resources
     // cc.LoaderScene.preload(g_maingame, function () {
     //   cc.audioEngine.stopMusic();

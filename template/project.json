@@ -10,6 +10,7 @@
   "modules" : ["cocos2d", "physics", "chipmunk"],
 
   "jsList" : [
+    "src/_defineFunctions.js",
     "src/_config.js",
     "src/resource.js",
     "src/playerSprite.js",

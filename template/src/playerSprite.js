@@ -18,15 +18,29 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.setPosition(this.position);
     this.setRandomRotation();
     this._color = this.color;
-    this._colorHurt = cc.color(255,0,0);
+    this._colorHurt = cc.color(255,150,150);
     this.scheduleUpdate();
   },
   update: function (dt) {
     if (this._hurt) {
       this._health -= this._hurt;
-      this.color = this._colorHurt;
+      cc.log(this._health);
+      if (this._health <= 0) {
+        _layer.gameOver();
+      }
     }
     this.move();
+    cc.log(this._health);
+  },
+  collision: function(something, something2) {
+    _player._hurt = 1;
+    _player.color = _player._colorHurt;
+    return true;
+  },
+  separate: function(something, something2) {
+    _player._hurt = 0;
+    _player.color = _player._color;
+    return true;
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {

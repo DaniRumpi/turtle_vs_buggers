@@ -5,7 +5,7 @@
 	<key>frames</key>
 	<dict>
 		
-		<key>explosion0.png</key>
+		<key>explosion_red0.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -27,7 +27,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion1.png</key>
+		<key>explosion_red1.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -49,7 +49,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion10.png</key>
+		<key>explosion_red10.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -71,7 +71,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion11.png</key>
+		<key>explosion_red11.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -93,7 +93,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion2.png</key>
+		<key>explosion_red2.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -115,7 +115,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion3.png</key>
+		<key>explosion_red3.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -137,7 +137,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion4.png</key>
+		<key>explosion_red4.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -159,7 +159,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion5.png</key>
+		<key>explosion_red5.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -181,7 +181,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion6.png</key>
+		<key>explosion_red6.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -203,7 +203,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion7.png</key>
+		<key>explosion_red7.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -225,7 +225,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion8.png</key>
+		<key>explosion_red8.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -247,7 +247,7 @@
 			<false/>
 		</dict>
 		
-		<key>explosion9.png</key>
+		<key>explosion_red9.png</key>
 		<dict>
 			<key>aliases</key>
 			<array>
@@ -287,11 +287,11 @@
 			<key>name</key>
 			<string>100%</string>
 			<key>textureFileName</key>
-			<string>explosion</string>
+			<string>explosion_red</string>
 			<key>textureFileExtension</key>
 			<string>.png</string>
 			<key>coordinatesFileName</key>
-			<string>explosion</string>
+			<string>explosion_red</string>
 			<key>coordinatesFileExtension</key>
 			<string>.plist</string>
 			<key>premultipliedAlpha</key>
