@@ -1,5 +1,6 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
   speed: 70.0,
+  _power: 1,
   setup: function(space) {
     this.scale = 0.4;
     this.setRandomPosition();
@@ -13,6 +14,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     space.addShape(this.$shape);
     this.setBody(this.$body);
 
+    this._color = this.color;
     this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
     this.scheduleOnce(this.update);
@@ -43,8 +45,8 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.position = _pos;
   },
   getAim: function() {
-    this._aimX = parseInt(cc.random0To1() * _size.width);
-    this._aimY = parseInt(cc.random0To1() * _size.height);
+    this._aimX = parseInt(cc.random0To1() * (_size.width - this.$width)) + this.$width / 2;
+    this._aimY = parseInt(cc.random0To1() * (_size.height - this.$height)) + this.$height / 2;
   },
   setRotationAim: function() {
     var pos = this.position;

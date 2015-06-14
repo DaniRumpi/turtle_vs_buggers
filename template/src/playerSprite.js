@@ -1,4 +1,6 @@
 var PlayerSprite = cc.PhysicsSprite.extend({
+  _hurt: 0,
+  _health: 100,
   _monstersDestroyed: 0,
   setup: function(space) {
     this.scale = 0.5;
@@ -15,9 +17,15 @@ var PlayerSprite = cc.PhysicsSprite.extend({
 
     this.setPosition(this.position);
     this.setRandomRotation();
+    this._color = this.color;
+    this._colorHurt = cc.color(255,0,0);
     this.scheduleUpdate();
   },
   update: function (dt) {
+    if (this._hurt) {
+      this._health -= this._hurt;
+      this.color = this._colorHurt;
+    }
     this.move();
   },
   handleKey: function(e, val) {

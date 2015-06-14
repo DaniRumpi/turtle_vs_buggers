@@ -19,6 +19,9 @@ function addWallsAndGround(space) {
   upperWall.setFriction(WALLS_FRICTION);
   space.addStaticShape(upperWall);
 }
+function addCollisionCallbacks(space) {
+  space.addCollisionHandler(1,2, _layer.collision, null, null, _layer.separate);
+}
 
 var MyLayer = cc.Layer.extend({
   space: null,
@@ -50,6 +53,7 @@ var MyLayer = cc.Layer.extend({
     this.space = new cp.Space();
     this.space.gravity = cp.v(0, 0);
     addWallsAndGround(this.space);
+    addCollisionCallbacks(this.space);
   },
   update: function (dt) {
     this.space.step(dt); // Chipmunk space
@@ -127,6 +131,16 @@ var MyLayer = cc.Layer.extend({
       this._monsters[i].unscheduleAllCallbacks();
     }
     cc.director.runScene(new cc.TransitionFade(2, GameOver.newScene(true)));
+  },
+  collision: function() {
+    cc.log("collision");
+    _player._hurt = 1;
+    return true;
+  },
+  separate: function() {
+    cc.log("separate");
+    _player._hurt = 0;
+    return true;
   }
 });
 
