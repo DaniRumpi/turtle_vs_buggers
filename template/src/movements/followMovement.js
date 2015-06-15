@@ -9,15 +9,17 @@ FollowMovement.prototype.setRotationAim = function () {
   var pos = this.obj.position;
   var angle = Math.atan2(this._aimX - pos.x, this._aimY - pos.y);
   this.obj.rotation = cc.radiansToDegrees(angle) || 0;
+  cc.log(this.obj.rotation);
 };
 FollowMovement.prototype.walk = function () {
+  this.setAim();
   this.setRotationAim();
   var pos = this.obj.position;
   var pTarget = cc.p(this._aimX, this._aimY);
   var realDist = cc.pDistance(pos, pTarget);
-  var dist = realDist * cc.random0To1() / 3;
+  var dist = realDist * cc.random0To1() / 2;
   var pAim, pRot, time, actionMove;
-  if (dist < 30) {
+  if (dist < 50) {
     time = realDist / (this.obj._speed * 1.2);
     actionMove = cc.MoveTo.create(time, pTarget);
   } else {
