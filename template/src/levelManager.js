@@ -48,7 +48,7 @@ var LevelManager = cc.Class.extend({
     var layer = this._layer;
     this._layer.scheduleOnce(function() {
       monster.setup(layer.space, config);
-      layer.addExplosion(EXPLOSION_RED, monster.position, 0);
+      layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
       layer.addChild(monster, 1);
       monster.update();
     }, config.showTime);

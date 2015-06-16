@@ -8,6 +8,8 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._power = config.power;
     this._speed = config.speed;
     this._health = config.health;
+    this._colorExplosion = config.colorExplosion;
+    this._colorShoot = config.colorShoot;
     
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
@@ -25,7 +27,6 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._ratio = this.$width / 2.3;
     // Create Movement
     this.configMovement(config);
-    // this.update();
   },
   update: function(dt) {
     this.move.walk();

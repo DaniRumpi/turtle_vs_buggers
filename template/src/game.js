@@ -27,15 +27,16 @@ var MyLayer = cc.Layer.extend({
     this.schedule(this.checkLevel, 0.5);
     this.schedule(this.update);
     this.addQuitMenuItem();
+    // this.addHealthLevel();
   },
   // init space of chipmunk
   initPhysics: function() {
     this.space = new cp.Space();
     this.space.gravity = cp.v(0, 0);
     //Add the Debug Layer:
-    var debugNode = new cc.PhysicsDebugNode(this.space);
-    debugNode.visible = true;
-    this.addChild(debugNode);
+    // var debugNode = new cc.PhysicsDebugNode(this.space);
+    // debugNode.visible = true;
+    // this.addChild(debugNode);
 
     addWallsAndGround(this.space);
   },
@@ -73,20 +74,6 @@ var MyLayer = cc.Layer.extend({
       _player.handleKey(e);
     }
   },
-  addPlayer: function() {
-    _player = this._player = new PlayerSprite(res.mainPlayer);
-    this._player.setup(this.space);
-    this.addChild(this._player, 0);
-    this._players.push(this._player);
-    addCollisionCallbacks(this.space, this._player.collision, this._player.separate);
-  },
-  addMonster: function() {
-    _monster = this._monster = new MonsterSprite(res.bugger);
-    this._monster.setup(this.space);
-    this._monsters.push(_monster);
-    this.addChild(this._monster, 1);
-    this.addExplosion(EXPLOSION_RED, this._monster.position, 0);
-  },
   shoot: function(origin, target, power, delay) {
     if (!target) {
       target = _layer._monsters;
@@ -103,11 +90,11 @@ var MyLayer = cc.Layer.extend({
       func();
     }
   },
-  addExplosion: function (name, position, offset) {
+  addExplosion: function (name, position, offset, color) {
     if (offset === undefined) {
       offset = 0;
     }
-    var explosion = new Explosion(name);
+    var explosion = new Explosion(name, color);
     this.addChild(explosion, offset);
     explosion.play(position);
   },

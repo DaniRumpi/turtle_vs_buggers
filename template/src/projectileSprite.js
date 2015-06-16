@@ -5,6 +5,9 @@ var ProjectileSprite = cc.Sprite.extend({
     this.origin = origin;
     this.targets = targets;
     this._power = power;
+    if (this.origin._colorShoot && HELPER_COLORS[this.origin._colorShoot]) {
+      this.color = HELPER_COLORS[this.origin._colorShoot];
+    }
  
     var x = 0, y = _size.width;
     var aim = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(origin.rotation));
@@ -21,6 +24,6 @@ var ProjectileSprite = cc.Sprite.extend({
   },
   autodestroy: function() {
     this.removeFromParent();
-    _layer.addExplosion(EXPLOSION_YELLOW, this._position, 3);
+    _layer.addExplosion(EXPLOSION_YELLOW, this._position, 3, this.origin._colorExplosion);
   }
 });

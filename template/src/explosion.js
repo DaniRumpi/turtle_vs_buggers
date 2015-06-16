@@ -1,10 +1,17 @@
 var Explosion = cc.Sprite.extend({
   active: true,
-  ctor: function (name) {
+  ctor: function (name, color) {
     var pFrame = cc.spriteFrameCache.getSpriteFrame(name+'1.png');
     this._super(pFrame);
-    this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
     this.animation = cc.animationCache.getAnimation(name);
+    this.config(color);
+  },
+  config: function(color) {
+    if (color && HELPER_COLORS[color]) {
+      this.color = HELPER_COLORS[color];
+    } else {
+      this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
+    }
   },
   play: function (position) {
     position && this.setPosition(position);

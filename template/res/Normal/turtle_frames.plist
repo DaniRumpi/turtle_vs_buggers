@@ -4,7 +4,7 @@
     <dict>
         <key>frames</key>
         <dict>
-            <key>turtle_frames_1.png</key>
+            <key>turtle_frames1.png</key>
             <dict>
                 <key>frame</key>
                 <string>{{2,2},{84,120}}</string>
@@ -17,7 +17,7 @@
                 <key>sourceSize</key>
                 <string>{84,120}</string>
             </dict>
-            <key>turtle_frames_2.png</key>
+            <key>turtle_frames2.png</key>
             <dict>
                 <key>frame</key>
                 <string>{{88,2},{84,120}}</string>
@@ -30,7 +30,7 @@
                 <key>sourceSize</key>
                 <string>{84,120}</string>
             </dict>
-            <key>turtle_frames_3.png</key>
+            <key>turtle_frames3.png</key>
             <dict>
                 <key>frame</key>
                 <string>{{174,2},{84,120}}</string>
@@ -43,7 +43,7 @@
                 <key>sourceSize</key>
                 <string>{84,120}</string>
             </dict>
-            <key>turtle_frames_4.png</key>
+            <key>turtle_frames4.png</key>
             <dict>
                 <key>frame</key>
                 <string>{{260,2},{84,120}}</string>
@@ -56,7 +56,7 @@
                 <key>sourceSize</key>
                 <string>{84,120}</string>
             </dict>
-            <key>turtle_frames_5.png</key>
+            <key>turtle_frames5.png</key>
             <dict>
                 <key>frame</key>
                 <string>{{346,2},{84,120}}</string>
@@ -79,7 +79,7 @@
             <key>size</key>
             <string>{432,124}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:4e942178754d2bdde8bf335fd4cb1c41:a19962961f48987862a640387186bfcd:396a53559f2068eaa97cc253af99f87a$</string>
+            <string>$TexturePacker:SmartUpdate:dbaf2296648c980d32f7ec3cc87f3ca7:a19962961f48987862a640387186bfcd:96fb3d46aab20ec9eb9704de1ab972b6$</string>
             <key>textureFileName</key>
             <string>turtle_frames.png</string>
         </dict>

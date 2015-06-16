@@ -4,11 +4,19 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   _targetsDestroyed: 0,
   _power: 1,
   _speed: 2,
+  ctor: function (name) {
+    var pFrame = cc.spriteFrameCache.getSpriteFrame(name+'1.png');
+    this._super(pFrame);
+    // this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
+    this.animation = cc.animationCache.getAnimation(name);
+  },
   setup: function(space, config) {
     this.scale = config.scale || 1;
     this._health += config.health;
     this._power = config.power;
     this._speed = config.speed;
+    this._colorExplosion = config.colorExplosion;
+    this._colorShoot = config.colorShoot;
 
     this.position = cc.p(_size.width/2, _size.height/2);
     this.$width = this.width * this.scale;
@@ -26,19 +34,33 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.setRandomRotation();
     this._color = this.color;
     this._colorHurt = cc.color(255,150,150);
+    
+    this.runningAction = new cc.RepeatForever(new cc.Animate(this.animation));
     this.scheduleUpdate();
+  },
+  play: function() {
+    if (!this._playing) {
+      this.runAction(this.runningAction);
+      this._playing = true;
+    }
+  },
+  stop: function() {
+    if (this._playing) {
+      this.stopAction(this.runningAction);
+      this._playing = false;
+    }
   },
   update: function (dt) {
     if (this._hurt) {
-      this._health -= this._hurt;
+      --this._health;
     }
-    if (this._health <= 0) {
+    if (!this._health || this._health <= 0) {
       _layer.gameOver();
     }
     this.move();
   },
   hurt: function(power) {
-    this._health -= power;
+    this._health -= power || 1;
   },
   collision: function(something, something2) {
     _player._hurt = 1;
@@ -50,6 +72,17 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     _player.color = _player._color;
     return true;
   },
+  // addHealthLevel: function() {
+  //   var str = "||||||||||";
+  //   var level = str.split("");
+    
+  //   this.label = cc.LabelTTF.create(str, "Monospace", 20);
+  //   _label = label;
+  //   target._healthLevel = label;
+  //   label.setColor(cc.color(255,255,255));
+  //   label.setPosition(_size.width - 70, _size.height - 20);
+  //   this.addChild(label);
+  // },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
       this._key_left = val;
@@ -62,6 +95,11 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     }
     else if (e === cc.KEY.down) {
       this._key_down = val;
+    }
+    if (!this._key_left && !this._key_right && !this._key_up && !this._key_down) {
+      this.stop();
+    } else {
+      this.play();
     }
   },
   move: function () {

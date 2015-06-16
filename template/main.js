@@ -18,6 +18,7 @@ cc.game.onStart = function(){
   cc.view.resizeWithBrowserSize(true);
 
   //load resources
+  setup_HELPER_COLORS();
   cc.LoaderScene.preload(g_resources, function () {
     _layer = new SysMenu();
     cc.director.runScene(_layer);
