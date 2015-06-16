@@ -6,9 +6,9 @@ var GameOver = cc.LayerColor.extend({
   
     var message;
     if (this._won) {
-        message = "You Won!";
+      message = "You Win!";
     } else {
-        message = "You Lose :[";
+      message = "You Lose :[";
     }
   
     var label = cc.LabelTTF.create(message, "Arial", 32);

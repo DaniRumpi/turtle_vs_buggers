@@ -7,18 +7,23 @@
   "renderMode" : 0,
   "engineDir":"../",
 
-  "modules" : ["cocos2d", "physics", "chipmunk"],
+  "modules" : ["cocos2d", "chipmunk", "physics"],
 
   "jsList" : [
+    "src/resource.js",
     "src/_defineFunctions.js",
     "src/_config.js",
-    "src/resource.js",
+    "src/movements/randomMovement.js",
+    "src/movements/followMovement.js",
+    "src/movements/attackMovement.js",
     "src/playerSprite.js",
     "src/monsterSprite.js",
     "src/projectileSprite.js",
     "src/explosion.js",
     "src/sysMenu.js",
     "src/gameOver.js",
+    "src/message.js",
+    "src/levelManager.js",
     "src/game.js"
   ]
 }

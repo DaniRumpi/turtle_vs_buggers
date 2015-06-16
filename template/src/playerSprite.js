@@ -1,12 +1,19 @@
 var PlayerSprite = cc.PhysicsSprite.extend({
   _hurt: 0,
-  _health: 100,
-  _monstersDestroyed: 0,
-  setup: function(space) {
-    this.scale = 0.5;
+  _health: 0,
+  _targetsDestroyed: 0,
+  _power: 1,
+  _speed: 2,
+  setup: function(space, config) {
+    this.scale = config.scale || 1;
+    this._health += config.health;
+    this._power = config.power;
+    this._speed = config.speed;
+
     this.position = cc.p(_size.width/2, _size.height/2);
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
+    this._ratio = this.$width / 2.3;
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -10, this.$height);
@@ -24,13 +31,14 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   update: function (dt) {
     if (this._hurt) {
       this._health -= this._hurt;
-      cc.log(this._health);
-      if (this._health <= 0) {
-        _layer.gameOver();
-      }
+    }
+    if (this._health <= 0) {
+      _layer.gameOver();
     }
     this.move();
-    cc.log(this._health);
+  },
+  hurt: function(power) {
+    this._health -= power;
   },
   collision: function(something, something2) {
     _player._hurt = 1;
@@ -58,10 +66,10 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   },
   move: function () {
     if (this._key_left && !this._key_right) {
-      this.rotation -= 2;
+      this.rotation -= this._speed;
     }
     else if (this._key_right && !this._key_left) {
-      this.rotation += 2;
+      this.rotation += this._speed;
     }
 
     if (this.rotation < 0) { this.rotation = 360; }
@@ -71,11 +79,11 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       var x, y;
       if (this._key_up && !this._key_down) {
         x = 0;
-        y = 2;
+        y = this._speed;
       }
       else if (this._key_down && !this._key_up) {
         x = 0;
-        y = -1;
+        y = -this._speed;
       } else {
         return;
       }

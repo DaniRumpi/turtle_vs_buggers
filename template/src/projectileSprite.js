@@ -1,8 +1,10 @@
 var ProjectileSprite = cc.Sprite.extend({
-  run: function(context, origin) {
+  run: function(context, origin, targets, power) {
     this.setPosition(origin.position);
     this.rotation = origin.rotation;
     this.origin = origin;
+    this.targets = targets;
+    this._power = power;
  
     var x = 0, y = _size.width;
     var aim = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(origin.rotation));
@@ -17,8 +19,8 @@ var ProjectileSprite = cc.Sprite.extend({
       cc.RemoveSelf.create(true)
     ));
   },
-  destroy: function() {
+  autodestroy: function() {
     this.removeFromParent();
-    this.origin._monstersDestroyed++;
+    _layer.addExplosion(EXPLOSION_YELLOW, this._position, 3);
   }
 });

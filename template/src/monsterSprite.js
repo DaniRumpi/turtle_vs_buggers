@@ -1,8 +1,14 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
-  _speed: 70.0,
+  _speed: 70,
   _power: 1,
-  setup: function(space) {
-    this.scale = 0.4;
+  _targetsDestroyed: 0,
+  _health: 1,
+  setup: function(space, config) {
+    this.scale = config.scale || 1;
+    this._power = config.power;
+    this._speed = config.speed;
+    this._health = config.health;
+    
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
     this.setRandomPosition();
@@ -17,19 +23,31 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._color = this.color;
     this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
-    this.update();
+    // Create Movement
+    this.configMovement(config);
+    // this.update();
   },
   update: function(dt) {
-      this.getAim();
-      this.setRotationAim();
-      this.move();
+    this.move.walk();
+  },
+  hurt: function(power) {
+    --this._health;
+    if (!this._health) {
+      this.destroy();
+      return true;
+    }
+    return false;
   },
   destroy: function() {
+    _layer._monsters.splice(_layer._monsters.indexOf(this), 1);
+    this.visible = false;
     this.stopAllActions();
-    this.removeAllChildrenWithCleanup();
-    this.removeFromParent();
-    _layer.space.removeShape(this.$shape);
-    _layer.space.removeBody(this.$body);
+    try {
+      _layer.space.removeShape(this.$shape);
+      _layer.space.removeBody(this.$body);
+      this.removeAllChildrenWithCleanup();
+      this.removeFromParent();
+    } catch(e) {}
   },
   setRandomPosition: function() {
     var _posX, _posY, _pos, _middle;
@@ -44,24 +62,13 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     }
     this.position = _pos;
   },
-  getAim: function() {
-    this._aimX = parseInt(cc.random0To1() * (_size.width - this.$width)) + this.$width / 2;
-    this._aimY = parseInt(cc.random0To1() * (_size.height - this.$height)) + this.$height / 2;
-  },
-  setRotationAim: function() {
-    var pos = this.position;
-    var angle = Math.atan2(this._aimX - pos.x, this._aimY - pos.y);
-    this.rotation = cc.radiansToDegrees(angle);
-  },
-  move: function () {
-    var pos = this.position;
-    var aim = cc.p(this._aimX, this._aimY);
-    var dist = cc.pDistance(aim, pos);
-    var time = dist / this._speed;
-    var actionMove = cc.MoveTo.create(time, aim);
-    var actionMoveDone = cc.CallFunc.create(function(node) {
-      this.update();
-    }, this);
-    this.runAction(cc.Sequence.create(actionMove, actionMoveDone));
+  configMovement: function(config) {
+    if (config.moveType === RANDOM_MOVE) {
+      this.move = new RandomMovement(this);
+    } else if (config.moveType === FOLLOW_MOVE) {
+      this.move = new FollowMovement(this);
+    } else if (config.moveType === ATTACK_MOVE) {
+      this.move = new AttackMovement(this);
+    }
   }
 });

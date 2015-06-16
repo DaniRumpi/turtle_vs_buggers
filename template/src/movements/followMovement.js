@@ -9,7 +9,6 @@ FollowMovement.prototype.setRotationAim = function () {
   var pos = this.obj.position;
   var angle = Math.atan2(this._aimX - pos.x, this._aimY - pos.y);
   this.obj.rotation = cc.radiansToDegrees(angle) || 0;
-  cc.log(this.obj.rotation);
 };
 FollowMovement.prototype.walk = function () {
   this.setAim();

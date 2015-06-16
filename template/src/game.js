@@ -4,17 +4,19 @@ function addCollisionCallbacks(space, collision, separate) {
 }
 
 var MyLayer = cc.Layer.extend({
-  space: null,
-  _player: null,
-  _monsters: [],
-  _projectiles:[],
-  _explosions: null,
   init:function () {
     this._super(); // 1. super init first
+    this.space = null;
+    this._player = null;
+    this._players = [];
+    this._monsters = [];
+    this._projectiles = [];
     this.initPhysics();
     setupAnimations(this);
 
-    this.addPlayer();
+    this.levelManager = LevelManager.getInstance(this);
+    this.levelManager.setup(this);
+    
     if (cc.sys.capabilities.hasOwnProperty('keyboard')) {
       cc.eventManager.addListener({
         event: cc.EventListener.KEYBOARD,
@@ -22,10 +24,8 @@ var MyLayer = cc.Layer.extend({
         onKeyReleased: this.onKeyReleased
       }, this);
     }
+    this.schedule(this.checkLevel, 0.5);
     this.schedule(this.update);
-    this.schedule(this.gameLogic, 3, 3);
-    this.scheduleOnce(this.addMonster, 1.0);
-
     this.addQuitMenuItem();
   },
   // init space of chipmunk
@@ -45,19 +45,21 @@ var MyLayer = cc.Layer.extend({
     var i, j, projectile, monster;
     for (i = this._projectiles.length - 1; i >= 0; i--) {
       projectile = this._projectiles[i];
-      for (j = this._monsters.length - 1; j >= 0; j--) {
-        monster = this._monsters[j];
-        if (cc.pDistance(projectile._position, monster._position) <= monster._ratio) {
-          this.addExplosion("explosion_yellow", monster._position, 3);
+      for (j = projectile.targets.length - 1; j >= 0; j--) {
+        target = projectile.targets[j];
+        if (target.visible && cc.pDistance(projectile._position, target._position) <= target._ratio) {
           this._projectiles.splice(i, 1);
-          this._monsters.splice(j, 1);
-          projectile.destroy();
-          monster.destroy();
+          if (target.hurt(projectile._power)) {
+            projectile.origin._targetsDestroyed++;
+          }
+          projectile.autodestroy();
           break;
         }
       }
     }
-    if (this._player._monstersDestroyed >= GAME.LEVELS[0].MONSTERS.length) {
+  },
+  checkLevel: function() {
+    if (this.levelManager.checkLevel()) {
       this.gameOver(true);
     }
   },
@@ -66,7 +68,7 @@ var MyLayer = cc.Layer.extend({
   },
   onKeyReleased: function(e) {
     if (e === cc.KEY.space) {
-      _layer.shoot();
+      _layer.shoot(_layer._player, _layer._monsters);
     } else {
       _player.handleKey(e);
     }
@@ -75,6 +77,7 @@ var MyLayer = cc.Layer.extend({
     _player = this._player = new PlayerSprite(res.mainPlayer);
     this._player.setup(this.space);
     this.addChild(this._player, 0);
+    this._players.push(this._player);
     addCollisionCallbacks(this.space, this._player.collision, this._player.separate);
   },
   addMonster: function() {
@@ -82,13 +85,23 @@ var MyLayer = cc.Layer.extend({
     this._monster.setup(this.space);
     this._monsters.push(_monster);
     this.addChild(this._monster, 1);
-    this.addExplosion("explosion_red", this._monster.position, 0);
+    this.addExplosion(EXPLOSION_RED, this._monster.position, 0);
   },
-  shoot: function() {
+  shoot: function(origin, target, power, delay) {
+    if (!target) {
+      target = _layer._monsters;
+    }
     var projectile = new ProjectileSprite(res.projectile);
-    projectile.run(_layer, _player);
-    _layer._projectiles.push(projectile);
-    _layer.addChild(projectile, 2);
+    var func = function() {
+      projectile.run(_layer, origin, target, power);
+      _layer._projectiles.push(projectile);
+      _layer.addChild(projectile, 2);
+    };
+    if (delay) {
+      _layer.scheduleOnce(func, delay);
+    } else {
+      func();
+    }
   },
   addExplosion: function (name, position, offset) {
     if (offset === undefined) {
@@ -119,13 +132,25 @@ var MyLayer = cc.Layer.extend({
     for (i = this._monsters.length - 1; i >= 0; i--) {
       this._monsters[i].unscheduleAllCallbacks();
     }
-    cc.director.runScene(new cc.TransitionFade(2, GameOver.newScene(won)));
+    this.update = function(){};
+
+    var message, nextLevel;
+    if (won) {
+      nextLevel = this.levelManager.nextLevel();
+    }
+    if (!won || !nextLevel) {
+      this.levelManager.reset();
+      cc.director.runScene(new cc.TransitionFade(2, GameOver.newScene(won)));
+    } else {
+      message = this.levelManager.toString();
+      cc.director.pushScene(new cc.TransitionFade(2, Message.newScene(message)));
+    }
   }
 });
 
 var _layer;
 var Game = cc.Scene.extend({
-  onEnter:function () {
+  onEnter: function() {
     this._super();
     _layer = new MyLayer();
     this.addChild(_layer);

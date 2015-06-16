@@ -1,3 +1,7 @@
+var WALLS_WIDTH = 5;
+var WALLS_ELASTICITY = 0.5;
+var WALLS_FRICTION = 1;
+
 function addWallsAndGround(space) {
   leftWall = new cp.SegmentShape(space.staticBody, new cp.v(0, 0), new cp.v(0, _size.height), WALLS_WIDTH);
   leftWall.setElasticity(WALLS_ELASTICITY);
@@ -40,25 +44,30 @@ function preCacheAnimations(layer, file) {
   cc.animationCache.addAnimation(animation, file.animation);
 }
 
+// ANIMATIONS
+EXPLOSION_YELLOW = "explosion_yellow";
+EXPLOSION_RED = "explosion_red";
+EXPLOSION_BLACK = "explosion_black";
+
 function setupAnimations(layer) {
   preCacheAnimations(layer, {
     plist: res.explosion_yellow_plist,
     image: res.explosion_yellow_png,
-    animation: "explosion_yellow",
+    animation: EXPLOSION_YELLOW,
     frames: 12,
     slot: 0.05
   });
   preCacheAnimations(layer, {
     plist: res.explosion_red_plist,
     image: res.explosion_red_png,
-    animation: "explosion_red",
+    animation: EXPLOSION_RED,
     frames: 12,
     slot: 0.03
   });
   preCacheAnimations(layer, {
     plist: res.explosion_black_plist,
     image: res.explosion_black_png,
-    animation: "explosion_black",
+    animation: EXPLOSION_BLACK,
     frames: 35,
     slot: 0.04
   });
