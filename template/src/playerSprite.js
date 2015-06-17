@@ -7,7 +7,6 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   ctor: function (name) {
     var pFrame = cc.spriteFrameCache.getSpriteFrame(name+'1.png');
     this._super(pFrame);
-    // this.setBlendFunc(cc.SRC_ALPHA, cc.ONE);
     this.animation = cc.animationCache.getAnimation(name);
   },
   setup: function(space, config) {
@@ -37,6 +36,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     
     this.runningAction = new cc.RepeatForever(new cc.Animate(this.animation));
     this.scheduleUpdate();
+    this.addHealthLevel();
   },
   play: function() {
     if (!this._playing) {
@@ -53,6 +53,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   update: function (dt) {
     if (this._hurt) {
       --this._health;
+      this.updateHealthLabel();
     }
     if (!this._health || this._health <= 0) {
       _layer.gameOver();
@@ -61,6 +62,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   },
   hurt: function(power) {
     this._health -= power || 1;
+    this.updateHealthLabel();
   },
   collision: function(something, something2) {
     _player._hurt = 1;
@@ -72,17 +74,23 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     _player.color = _player._color;
     return true;
   },
-  // addHealthLevel: function() {
-  //   var str = "||||||||||";
-  //   var level = str.split("");
-    
-  //   this.label = cc.LabelTTF.create(str, "Monospace", 20);
-  //   _label = label;
-  //   target._healthLevel = label;
-  //   label.setColor(cc.color(255,255,255));
-  //   label.setPosition(_size.width - 70, _size.height - 20);
-  //   this.addChild(label);
-  // },
+  addHealthLevel: function() {
+    this._label = "||||||||||||||||||||";
+    this.label = cc.LabelTTF.create(this._label, "Helvetica Neue", 20);
+    this.label.setColor(cc.color(255,255,255));
+    this.label.setPosition(_size.width - 70, _size.height - 20);
+    _layer.addChild(this.label);
+  },
+  updateHealthLabel: function() {
+    var levelBar;
+    if (this._health >= 100) {
+      levelBar = 20;
+    } else {
+      var levelHealth = parseInt(this._health/5);
+      levelBar = (this._label.split("").slice(0, levelHealth)).join("");
+    }
+    this.label.setString(levelBar);
+  },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
       this._key_left = val;
