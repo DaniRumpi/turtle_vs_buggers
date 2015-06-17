@@ -8,7 +8,9 @@ var res = {
   bugger3: "bugger3.png",
   projectile: "projectile.png",
   explosion_yellow_png: "explosion_yellow.png",
-  explosion_yellow_plist: "explosion_yellow.plist"
+  explosion_yellow_plist: "explosion_yellow.plist",
+  bg1: "bg1.jpg",
+  bg2: "bg2.jpg"
 }
 
 var g_resources = [
@@ -21,5 +23,7 @@ var g_resources = [
   res.bugger2,
   res.bugger3,
   res.explosion_yellow_png,
-  res.explosion_yellow_plist
+  res.explosion_yellow_plist,
+  res.bg1,
+  res.bg2,
 ];

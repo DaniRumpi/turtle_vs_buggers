@@ -23,7 +23,7 @@ PLAYER_LEVEL2 = {
 PLAYER_LEVEL3 = {
   speed: 3,
   power: 1,
-  health: 50,
+  health: 9999,
   scale: 0.4,
   sprite: TURTLE_FRAMES,
   colorExplosion: "default",
@@ -74,7 +74,11 @@ LEVEL1 = {
       colorExplosion: "red"
     }
   ],
-  PLAYERS: [PLAYER_LEVEL1]
+  PLAYERS: [PLAYER_LEVEL1],
+  BG: {
+    sprite: res.bg1,
+    color: "default"
+  }
 };
 LEVEL2 = {
   MAX_MONSTERS: 6,
@@ -140,7 +144,11 @@ LEVEL2 = {
       colorExplosion: "yellow",
     }
   ],
-  PLAYERS: [PLAYER_LEVEL2]
+  PLAYERS: [PLAYER_LEVEL2],
+  BG: {
+    sprite: res.bg2,
+    color: "default"
+  }
 };
 LEVEL3 = {
   MAX_MONSTERS: 8,
@@ -230,7 +238,11 @@ LEVEL3 = {
       colorShoot: "blue"
     }
   ],
-  PLAYERS: [PLAYER_LEVEL3]
+  PLAYERS: [PLAYER_LEVEL3],
+  BG: {
+    sprite: res.bg2,
+    color: "default"
+  }
 };
 GAME = {
   LEVELS: [

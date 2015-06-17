@@ -84,7 +84,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   updateHealthLabel: function() {
     var levelBar;
     if (this._health >= 100) {
-      levelBar = 20;
+      levelBar = this._label;
     } else {
       var levelHealth = parseInt(this._health/5);
       levelBar = (this._label.split("").slice(0, levelHealth)).join("");

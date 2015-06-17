@@ -27,7 +27,6 @@ var MyLayer = cc.Layer.extend({
     this.schedule(this.checkLevel, 0.5);
     this.schedule(this.update);
     this.addQuitMenuItem();
-    // this.addHealthLevel();
   },
   // init space of chipmunk
   initPhysics: function() {
@@ -142,7 +141,5 @@ var Game = cc.Scene.extend({
     _layer = new MyLayer();
     this.addChild(_layer);
     _layer.init();
-    var colorLayer = new cc.LayerColor(cc.color(100,100,100), _size.width, _size.height);
-    this.addChild(colorLayer, -1);
   }
 });
