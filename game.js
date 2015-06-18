@@ -1,29 +1,27 @@
 /**************************************************
 ** NODE.JS REQUIREMENTS
 **************************************************/
-var app = require('http').createServer(handler)
+var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 var fs = require('fs');
 
 if (typeof String.prototype.startsWith !== 'function') {
-  // see below for better implementation!
   String.prototype.startsWith = function (str){
     return this.indexOf(str) === 0;
   };
 }
 
+var resource;
 function handler (req, res) {
   function callback(err, data) {
     if (err) {
       res.writeHead(500);
-      console.log(err);
       return res.end('Error loading index.html');
     }
     res.writeHead(200);
     res.end(data);
   }
-  console.log(req.url);
-  var resource = req.url.split("?")[0];
+  resource = req.url.split("?")[0];
   if (resource === "/" || resource === "/index.html") {
     fs.readFile(__dirname + "/template/index.html", callback);
   } else if (resource === "/main.js" || resource === "/project.json") {
@@ -55,11 +53,8 @@ io.on('connection', onSocketConnection);
 // New socket connection
 function onSocketConnection(client) {
 	console.log("New player has connected: " + client.id);
-	// Listen for client disconnected
 	client.on("disconnect", onClientDisconnect);
-	// Listen for new player message
 	client.on("new player", onNewPlayer);
-	// Listen for move player message
 	client.on("move player", onMovePlayer);
 }
 
