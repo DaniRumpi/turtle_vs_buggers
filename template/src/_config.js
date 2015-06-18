@@ -76,8 +76,8 @@ LEVEL1 = {
   ],
   PLAYERS: [PLAYER_LEVEL1],
   BG: {
-    sprite: res.bg1,
-    color: "default"
+    sprite: res.bg3,
+    color: "bg"
   }
 };
 LEVEL2 = {
@@ -147,7 +147,7 @@ LEVEL2 = {
   PLAYERS: [PLAYER_LEVEL2],
   BG: {
     sprite: res.bg2,
-    color: "default"
+    color: "bg"
   }
 };
 LEVEL3 = {
@@ -181,8 +181,8 @@ LEVEL3 = {
       scale: 0.3,
       showTime: 1,
       sprite: res.bugger3,
-      colorExplosion: "blue",
-      colorShoot: "blue"
+      colorExplosion: "bg",
+      colorShoot: "bg"
     },
     {
       moveType: FOLLOW_MOVE,
@@ -202,8 +202,8 @@ LEVEL3 = {
       scale: 0.3,
       showTime: 7,
       sprite: res.bugger3,
-      colorExplosion: "blue",
-      colorShoot: "blue"
+      colorExplosion: "bg",
+      colorShoot: "bg"
     },
     {
       moveType: FOLLOW_MOVE,
@@ -223,8 +223,8 @@ LEVEL3 = {
       scale: 0.3,
       showTime: 10,
       sprite: res.bugger3,
-      colorExplosion: "blue",
-      colorShoot: "blue"
+      colorExplosion: "bg",
+      colorShoot: "bg"
     },
     {
       moveType: ATTACK_MOVE,
@@ -234,14 +234,14 @@ LEVEL3 = {
       scale: 0.3,
       showTime: 10,
       sprite: res.bugger3,
-      colorExplosion: "blue",
-      colorShoot: "blue"
+      colorExplosion: "bg",
+      colorShoot: "bg"
     }
   ],
   PLAYERS: [PLAYER_LEVEL3],
   BG: {
-    sprite: res.bg2,
-    color: "default"
+    sprite: res.bg3,
+    color: "bg"
   }
 };
 GAME = {

@@ -27,7 +27,7 @@ var LevelManager = cc.Class.extend({
   setup: function(layer) {
     this._layer = layer;
     // Load Background
-    BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
+    _bg = BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
     // Load Player
     for (i = this.level.PLAYERS.length - 1; i >= 0; i--) {
       this.addPlayer(this.level.PLAYERS[i]);

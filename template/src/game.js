@@ -4,7 +4,7 @@ function addCollisionCallbacks(space, collision, separate) {
 }
 
 var MyLayer = cc.Layer.extend({
-  init:function () {
+  init:function (multiplayer) {
     this._super(); // 1. super init first
     this.space = null;
     this._player = null;
@@ -14,7 +14,7 @@ var MyLayer = cc.Layer.extend({
     this.initPhysics();
     setupAnimations(this);
 
-    this.levelManager = LevelManager.getInstance(this);
+    this.levelManager = LevelManager.getInstance(this, multiplayer);
     this.levelManager.setup(this);
     
     if (cc.sys.capabilities.hasOwnProperty('keyboard')) {

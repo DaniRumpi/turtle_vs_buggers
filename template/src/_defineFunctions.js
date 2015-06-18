@@ -73,6 +73,7 @@ function setup_HELPER_COLORS() {
     yellow: cc.color(200,200, 100),
     blue: cc.color(25,0,255),
     black: cc.color(50,50,50),
+    bg: cc.color(0,200,200),
     default: cc.color(255,255,255)
   };
 }
