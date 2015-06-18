@@ -5,9 +5,9 @@
   "frameRate" : 60,
   "id" : "gameCanvas",
   "renderMode" : 0,
-  "engineDir":"../",
+  "engineDir":"engine/",
 
-  "modules" : ["cocos2d", "chipmunk", "physics"],
+  "modules" : ["cocos2d", "chipmunk","socketio"],
 
   "jsList" : [
     "src/resource.js",
