@@ -3,7 +3,7 @@ function addCollisionCallbacks(space, collision, separate) {
   space.addCollisionHandler(1,2, collision, null, null, separate);
 }
 
-var MyLayer = cc.Layer.extend({
+var GameLayer = cc.Layer.extend({
   init:function (multiplayer) {
     this._super(); // 1. super init first
     this.space = null;
@@ -13,20 +13,17 @@ var MyLayer = cc.Layer.extend({
     this._projectiles = [];
     this.initPhysics();
     setupAnimations(this);
-
     this.levelManager = LevelManager.getInstance(this, multiplayer);
     this.levelManager.setup(this);
     
-    if (cc.sys.capabilities.hasOwnProperty('keyboard')) {
-      cc.eventManager.addListener({
-        event: cc.EventListener.KEYBOARD,
-        onKeyPressed: this.onKeyPressed,
-        onKeyReleased: this.onKeyReleased
-      }, this);
-    }
-    this.schedule(this.checkLevel, 0.5);
+    this.keyboardSetup(this.onKeyPressed, this.onKeyReleased);
+    
+    this.schedule(this.checkLevel, 1);
     this.schedule(this.update);
     this.addQuitMenuItem();
+    if (multiplayer) {
+      this.multiplayer = new Multiplayer(this);
+    }
   },
   // init space of chipmunk
   initPhysics: function() {
@@ -97,9 +94,6 @@ var MyLayer = cc.Layer.extend({
     this.addChild(explosion, offset);
     explosion.play(position);
   },
-  gameLogic: function(dt) {
-    this.addMonster();
-  },
   addQuitMenuItem: function() {
     // add a "close" icon to exit the game
     var closeItem = new cc.MenuItemImage(res.CloseNormal_png, res.CloseSelected_png, this.onQuit);
@@ -111,6 +105,15 @@ var MyLayer = cc.Layer.extend({
   },
   onQuit: function() {
     cc.director.runScene(new SysMenu());
+  },
+  keyboardSetup: function(onKeyPressed, onKeyReleased) {
+    if (cc.sys.capabilities.hasOwnProperty('keyboard')) {
+      cc.eventManager.addListener({
+        event: cc.EventListener.KEYBOARD,
+        onKeyPressed: onKeyPressed,
+        onKeyReleased: onKeyReleased
+      }, this);
+    }
   },
   gameOver: function(won) {
     this.unscheduleAllCallbacks();
@@ -136,10 +139,14 @@ var MyLayer = cc.Layer.extend({
 
 var _layer;
 var Game = cc.Scene.extend({
+  ctor: function(multiplayer) {
+    this._super();
+    this.multiplayer = multiplayer;
+  },
   onEnter: function() {
     this._super();
-    _layer = new MyLayer();
+    _layer = new GameLayer();
     this.addChild(_layer);
-    _layer.init();
+    _layer.init(this.multiplayer);
   }
 });

@@ -23,12 +23,13 @@ PLAYER_LEVEL2 = {
 PLAYER_LEVEL3 = {
   speed: 3,
   power: 1,
-  health: 9999,
+  health: 100,
   scale: 0.4,
   sprite: TURTLE_FRAMES,
   colorExplosion: "default",
   colorShoot: "default"
 };
+PLAYER = PLAYER_LEVEL3;
 
 LEVEL1 = {
   MAX_MONSTERS: 4,
@@ -244,10 +245,24 @@ LEVEL3 = {
     color: "bg"
   }
 };
+
+LEVEL_MULTIPLAYER = {
+  MAX_MONSTERS: 8,
+  MONSTERS: [],
+  PLAYERS: [PLAYER_LEVEL3],
+  BG: {
+    sprite: res.bg3,
+    color: "bg"
+  }
+};
+
 GAME = {
   LEVELS: [
     LEVEL1,
     LEVEL2,
     LEVEL3
+  ],
+  MULTIPLAYER: [
+    LEVEL_MULTIPLAYER
   ]
 }

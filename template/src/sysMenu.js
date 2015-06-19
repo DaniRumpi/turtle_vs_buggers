@@ -6,7 +6,7 @@ var SysMenu = cc.Layer.extend({
   init: function () {
     this._super();
     var menuItem1 = new cc.MenuItemFont("New Game", this.onNewGame);
-    var menuItem2 = new cc.MenuItemFont("Multiplayer", this.onNewGame);
+    var menuItem2 = new cc.MenuItemFont("Multiplayer", this.onMultiplayer);
     var menuItem3 = new cc.MenuItemFont("Highscores", this.onHighscores);
     // var menuItem3 = new cc.MenuItemFont("Settings", this.onSettings);
     var menuItem4 = new cc.MenuItemFont("About", this.onAbout);
@@ -26,6 +26,9 @@ var SysMenu = cc.Layer.extend({
     //   scene.addChild(new GameControlMenu());
     //   cc.director.runScene(new cc.TransitionFade(1.2, scene));
     // }, this);
+  },
+  onMultiplayer: function () {
+    cc.director.runScene(new cc.TransitionFade(1, new Game(true)));
   },
   onSettings: function () {
     // this.onButtonEffect();

@@ -2,12 +2,13 @@ var LevelManager = cc.Class.extend({
   _level: null,
   _layer: null,
   level: null,
-  ctor: function (gameLayer) {
+  ctor: function (gameLayer, multiplayer) {
     if (!gameLayer) {
       throw 'gameLayer must be non-nil';
     }
     this._layer = gameLayer;
     this._level = 0;
+    this.multiplayer = multiplayer;
     if (!this.level) {
       this.setLevel();
     }
@@ -16,10 +17,17 @@ var LevelManager = cc.Class.extend({
     if (!this._level) {
       this.level = 0;
     }
-    this.level = GAME.LEVELS[this._level];
+    this.level = this.getLevel(this._level);
+  },
+  getLevel: function(level) {
+    if (this.multiplayer) {
+      return GAME.MULTIPLAYER[level];
+    } else {
+      return GAME.LEVELS[level]
+    }
   },
   nextLevel: function() {
-    if (GAME.LEVELS[this._level + 1]) {
+    if (this.getLevel(this._level + 1)) {
       this.setLevel(++this._level);
       return this._level;
     }
@@ -28,6 +36,7 @@ var LevelManager = cc.Class.extend({
     this._layer = layer;
     // Load Background
     _bg = BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
+    cc.log("#LM", this.level);
     // Load Player
     for (i = this.level.PLAYERS.length - 1; i >= 0; i--) {
       this.addPlayer(this.level.PLAYERS[i]);
@@ -38,22 +47,15 @@ var LevelManager = cc.Class.extend({
     }
   },
   addPlayer: function(config) {
-    _player = this._layer._player = new PlayerSprite(config.sprite);
-    _player.setup(this._layer.space, config);
+    _player = this._layer._player = new PlayerSprite(config);
+    // _player.setup(this._layer.space, config);
     this._layer._players.push(_player);
-    this._layer.addChild(this._layer._player, 0);
+    // this._layer.addChild(this._layer._player, 0);
     addCollisionCallbacks(this._layer.space, _player.collision, _player.separate);
   },
   addMonster: function(config) {
-    var monster = new MonsterSprite(config.sprite);
+    var monster = new MonsterSprite(config, {});
     this._layer._monsters.push(monster);
-    var layer = this._layer;
-    this._layer.scheduleOnce(function() {
-      monster.setup(layer.space, config);
-      layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
-      layer.addChild(monster, 1);
-      monster.update();
-    }, config.showTime);
   },
   checkLevel: function() {
     if (this._layer._players.length) {
@@ -71,9 +73,9 @@ var LevelManager = cc.Class.extend({
 });
 
 var _levelManager;
-LevelManager.getInstance = function (layer) {
+LevelManager.getInstance = function (layer, multiplayer) {
   if (!_levelManager) {
-    _levelManager = new LevelManager(layer);
+    _levelManager = new LevelManager(layer, multiplayer);
   }
   return _levelManager;
 }

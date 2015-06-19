@@ -36,14 +36,18 @@ function handler (req, res) {
 }
 
 
-var Player = require("./server/Player").Player;	// Player class
+var Player = require("./server/Player").Player;
+var Monster = require("./server/Monster").Monster;
+var MonstersController = require("./server/MonstersController").MonstersController;
+var GAME = require('./_config.js').GAME;
 
 
 /**************************************************
 ** GAME VARIABLES
 **************************************************/
-var socket,		// Socket controller
-	players = [];	// Array of connected players
+var socket,
+	players = [],
+	monsters = [];
 
 /**************************************************
 ** GAME INITIALISATION
@@ -57,6 +61,12 @@ function onSocketConnection(client) {
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
 }
+
+var monstersController = new MonstersController(GAME, Monster, monsters);
+var interval = setInterval(function () {
+  monstersController.updateAll();
+  io.sockets.emit("update monsters", {monsters: monsters});
+}, 1000);
 
 function onClientDisconnect() {
   console.log("Player has disconnected: "+this.id);
@@ -77,15 +87,25 @@ function onClientDisconnect() {
 }
 
 function onNewPlayer(data) {
-  var newPlayer = new Player(data.x, data.y);
+  var newPlayer = new Player(data);
   newPlayer.id = this.id;
-  this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+  this.broadcast.emit("new player", {
+    id: newPlayer.id,
+    x: newPlayer.getX(),
+    y: newPlayer.getY(),
+    r: newPlayer.getR()
+  });
   
   // Send existing players to the new player
 	var i, existingPlayer;
-	for (i = 0; i < players.length; i++) {
+	for (i = players.length - 1; i >= 0; i--) {
 		existingPlayer = players[i];
-		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY()});
+		this.emit("new player", {
+		  id: existingPlayer.id,
+		  x: existingPlayer.getX(),
+		  y: existingPlayer.getY(),
+		  r: existingPlayer.getR()
+		});
 	}
 	
 	// Add new player to the players array
@@ -102,8 +122,14 @@ function onMovePlayer(data) {
   
   movePlayer.setX(data.x);
   movePlayer.setY(data.y);
+  movePlayer.setR(data.r);
   
-  this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
+  this.broadcast.emit("move player", {
+    id: movePlayer.id,
+    x: movePlayer.getX(),
+    y: movePlayer.getY(),
+    r: movePlayer.getR()
+  });
 }
 
 /**************************************************

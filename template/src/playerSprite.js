@@ -4,20 +4,26 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   _targetsDestroyed: 0,
   _power: 1,
   _speed: 2,
-  ctor: function (name) {
-    var pFrame = cc.spriteFrameCache.getSpriteFrame(name+'1.png');
+  ctor: function (_default, config) {
+    if (!config) {
+      config = {};
+    }
+    var pFrame = cc.spriteFrameCache.getSpriteFrame(_default.sprite+'1.png');
     this._super(pFrame);
-    this.animation = cc.animationCache.getAnimation(name);
-  },
-  setup: function(space, config) {
-    this.scale = config.scale || 1;
-    this._health += config.health;
-    this._power = config.power;
-    this._speed = config.speed;
-    this._colorExplosion = config.colorExplosion;
-    this._colorShoot = config.colorShoot;
+    this.animation = cc.animationCache.getAnimation(_default.sprite);
+    
+    this.scale = _default.scale || 1;
+    this._health += _default.health;
+    this._power = _default.power;
+    this._speed = _default.speed;
+    this._colorExplosion = _default.colorExplosion;
+    this._colorShoot = _default.colorShoot;
 
-    this.position = cc.p(_size.width/2, _size.height/2);
+    if (config.x === undefined) {
+      this.position = cc.p(_size.width/2, _size.height/2);
+    } else {
+      this.position = cc.p(config.x, config.y);
+    }
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
     this._ratio = this.$width / 2.3;
@@ -25,18 +31,29 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -10, this.$height);
     this.$shape.setCollisionType(1);
-    space.addBody(this.$body);
-    space.addShape(this.$shape);
+    _layer.space.addBody(this.$body);
+    _layer.space.addShape(this.$shape);
     this.setBody(this.$body);
 
     this.setPosition(this.position);
-    this.setRandomRotation();
+    this.setRandomRotation(config);
     this._color = this.color;
     this._colorHurt = cc.color(255,150,150);
     
     this.runningAction = new cc.RepeatForever(new cc.Animate(this.animation));
-    this.scheduleUpdate();
-    this.addHealthLevel();
+    this._remote = config.remote;
+    if (this._remote) {
+      this.runAction(this.runningAction);
+    } else {
+      this.scheduleUpdate();
+      this.addHealthLevel();
+    }
+    _layer.addChild(this, 0);
+  },
+  setup: function(data) {
+    this.setPosition(cc.p(data.x, data.y));
+    this.rotation = data.r;
+    cc.log("setup>>", data);
   },
   play: function() {
     if (!this._playing) {
@@ -111,11 +128,14 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     }
   },
   move: function () {
+    var update = false;
     if (this._key_left && !this._key_right) {
       this.rotation -= this._speed;
+      update = true;
     }
     else if (this._key_right && !this._key_left) {
       this.rotation += this._speed;
+      update = true;
     }
 
     if (this.rotation < 0) { this.rotation = 360; }
@@ -130,14 +150,32 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       else if (this._key_down && !this._key_up) {
         x = 0;
         y = -this._speed;
+        update = true;
       } else {
         return;
       }
       var pRot = cc.pRotateByAngle(cc.p(x, y), cc.p(), -cc.degreesToRadians(this.rotation));
       this.setPosition(cc.pAdd(this._position, pRot));
+      update = true;
+    }
+    if (update && _layer.multiplayer) {
+      cc.log("UPDATE::", {
+        x: this.position.x,
+        y: this.position.y,
+        r: this.rotation
+      });
+      _layer.multiplayer.emitMovePlayer({
+        x: this.position.x,
+        y: this.position.y,
+        r: this.rotation
+      });
     }
   },
-  setRandomRotation: function() {
-    this.rotation = parseInt(cc.random0To1() * 360);
+  setRandomRotation: function(config) {
+    if (config.r) {
+      this.rotation = config.r;
+    } else {
+      this.rotation = parseInt(cc.random0To1() * 360);
+    }
   }
 });

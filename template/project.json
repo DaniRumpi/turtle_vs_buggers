@@ -7,7 +7,7 @@
   "renderMode" : 0,
   "engineDir":"engine/",
 
-  "modules" : ["cocos2d", "chipmunk","socketio"],
+  "modules" : ["cocos2d", "chipmunk"],
 
   "jsList" : [
     "src/resource.js",
@@ -25,6 +25,7 @@
     "src/gameOver.js",
     "src/message.js",
     "src/levelManager.js",
+    "src/multiplayer.js",
     "src/game.js"
   ]
 }
