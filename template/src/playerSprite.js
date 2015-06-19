@@ -30,7 +30,11 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -10, this.$height);
-    this.$shape.setCollisionType(1);
+    if (config.remote) {
+      this.$shape.setCollisionType(0);
+    } else {
+      this.$shape.setCollisionType(1);
+    }
     _layer.space.addBody(this.$body);
     _layer.space.addShape(this.$shape);
     this.setBody(this.$body);

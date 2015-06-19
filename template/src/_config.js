@@ -23,7 +23,7 @@ PLAYER_LEVEL2 = {
 PLAYER_LEVEL3 = {
   speed: 3,
   power: 1,
-  health: 100,
+  health: 9999,
   scale: 0.4,
   sprite: TURTLE_FRAMES,
   colorExplosion: "default",
@@ -246,10 +246,19 @@ LEVEL3 = {
   }
 };
 
+BUGGER1 = {
+  moveType: RANDOM_MOVE,
+  power: 1,
+  speed: 90.0,
+  health: 1,
+  scale: 0.3,
+  sprite: res.bugger1,
+  colorExplosion: "red",
+};
 LEVEL_MULTIPLAYER = {
-  MAX_MONSTERS: 8,
+  MAX_MONSTERS: 10,
   MONSTERS: [],
-  PLAYERS: [PLAYER_LEVEL3],
+  PLAYERS: [PLAYER],
   BG: {
     sprite: res.bg3,
     color: "bg"
@@ -265,4 +274,4 @@ GAME = {
   MULTIPLAYER: [
     LEVEL_MULTIPLAYER
   ]
-}
+};

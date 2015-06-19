@@ -1,7 +1,7 @@
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
-var _players = [], _monsters = [], _socket;
+var _players = [], _monsters, _socket;
 // Find player by ID
 function playerById(id) {
 	var i;
@@ -11,13 +11,20 @@ function playerById(id) {
 	}
 	return false;
 }
+function monsterById(id) {
+	var i;
+	for (i = 0; i < _monsters.length; i++) {
+		if (_monsters[i].id == id)
+			return _monsters[i];
+	}
+	return false;
+}
 
 var Multiplayer = cc.Class.extend({
   _level: null,
   _layer: null,
   level: null,
   players: [],
-  monsters: [],
   ctor: function (gameLayer) {
     this._layer = gameLayer;
     _socket = this.socket = io("ws://localhost:8000");
@@ -28,9 +35,11 @@ var Multiplayer = cc.Class.extend({
     this.socket.on("remove player", this.onRemovePlayer);
     
     this.socket.on("new monster", this.onNewMonster);
+    this.socket.on("update monster", this.onUpdateMonster);
     this.socket.on("update monsters", this.onUpdateMonsters);
+    
     _players = this.players;
-    _monsters = this.monsters;
+    _monsters = this._layer._monsters;
   },
   onSocketConnected: function() {
     cc.log("Connected to socket server");
@@ -84,7 +93,6 @@ var Multiplayer = cc.Class.extend({
   	var newMonster = new MonsterSprite(BUGGER1, {
   	  x: data.x,
   	  y: data.y,
-  	  r: data.r,
   	  aimX: data.aimX,
   	  aimY: data.aimY,
   	  remote: true
@@ -93,10 +101,21 @@ var Multiplayer = cc.Class.extend({
   	// Add new player to the remote players array
   	_monsters.push(newMonster);
   },
+  onUpdateMonster: function(data) {
+    cc.log("onUpdateMonster _>", data);
+    var monster = monsterById(data.id);
+    if (monster) {
+      monster.setup(data);
+    }
+  },
   onUpdateMonsters: function(data) {
-    var i = data.monsters.length - 1;
+    cc.log("onUpdateMonsters", data);
+    var i = data.monsters.length - 1, monster;
     for (i; i >= 0; i--) {
-      data.monsters[i].setup(data);
+      monster = monsterById(data.monsters[i].id);
+      if (monster) {
+        monster.setup(data.monsters[i]);
+      }
     }
   },
   emitMovePlayer: function(data) {

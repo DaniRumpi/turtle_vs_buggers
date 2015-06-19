@@ -63,25 +63,44 @@ function onSocketConnection(client) {
 }
 
 var monstersController = new MonstersController(GAME, Monster, monsters);
-var interval = setInterval(function () {
-  monstersController.updateAll();
-  io.sockets.emit("update monsters", {monsters: monsters});
-}, 1000);
-
-function onClientDisconnect() {
-  console.log("Player has disconnected: "+this.id);
-
-	var removePlayer = playerById(this.id);
-
-	// Player not found
-	if (!removePlayer) {
-		console.log("Player not found: "+this.id);
-		return;
+var interval = setInterval(function() {
+  var newMonsters = monstersController.getRandomMonsters();
+  var newMonster, i;
+  for (i = newMonsters.length - 1; i >= 0; i--) {
+		newMonster = newMonsters[i];
+		io.sockets.emit("new monster", {
+		  id: newMonster.id,
+		  x: newMonster.getX(),
+		  y: newMonster.getY()
+		});
+		monsters.push(newMonster);
 	}
 
+  var updated = monstersController.updateAll();
+  var existingMonster;
+  for (i = monsters.length - 1; i >= 0; i--) {
+		existingMonster = monsters[i];
+		io.sockets.emit("update monster", {
+		  id: existingMonster.id,
+		  x: existingMonster.getX(),
+		  y: existingMonster.getY(),
+      aimX: existingMonster.getAimX(),
+      aimY: existingMonster.getAimY()
+		});
+	}
+}, 200);
+
+
+function onClientDisconnect() {
+  console.log("Player has disconnected: " + this.id);
+	var removePlayer = playerById(this.id);
+	// Player not found
+	if (!removePlayer) {
+		console.log("Player not found: " + this.id);
+		return;
+	}
 	// Remove player from players array
 	players.splice(players.indexOf(removePlayer), 1);
-
 	// Broadcast removed player to connected socket clients
 	this.broadcast.emit("remove player", {id: this.id});
 }
@@ -97,7 +116,7 @@ function onNewPlayer(data) {
   });
   
   // Send existing players to the new player
-	var i, existingPlayer;
+	var i, existingPlayer, existingMonster;
 	for (i = players.length - 1; i >= 0; i--) {
 		existingPlayer = players[i];
 		this.emit("new player", {
@@ -105,6 +124,16 @@ function onNewPlayer(data) {
 		  x: existingPlayer.getX(),
 		  y: existingPlayer.getY(),
 		  r: existingPlayer.getR()
+		});
+	}
+	for (i = monsters.length - 1; i >= 0; i--) {
+		existingMonster = monsters[i];
+		this.emit("new monster", {
+		  id: existingMonster.id,
+		  x: existingMonster.getX(),
+		  y: existingMonster.getY(),
+      aimX: existingMonster.getAimX(),
+      aimY: existingMonster.getAimY()
 		});
 	}
 	
@@ -116,7 +145,7 @@ function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
   
   if (!movePlayer) {
-    console.log("Player not found: "+this.id);
+    console.log("Player not found: " + this.id);
     return;
   }
   
@@ -139,10 +168,9 @@ function onMovePlayer(data) {
 function playerById(id) {
 	var i = players.length - 1;
 	for (i; i >= 0; i--) {
-		if (players[i].id == id)
+		if (players[i].id === id)
 			return players[i];
 	}
-	
 	return false;
 }
 

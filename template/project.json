@@ -16,6 +16,7 @@
     "src/movements/randomMovement.js",
     "src/movements/followMovement.js",
     "src/movements/attackMovement.js",
+    "src/movements/randomMovementRemote.js",
     "src/backgroundSky.js",
     "src/playerSprite.js",
     "src/monsterSprite.js",

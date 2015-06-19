@@ -1,46 +1,52 @@
 var Monster = function(data) {
-  var x = data.x,
-    y = data.y,
-    r = data.r,
-    aimX, aimY;
+  this.x = data.x;
+  this.y = data.y;
+  this.speed = data.speed;
   
   this.id = data.id;
   this.getX = function() {
-    return x;
+    return this.x;
   };
   this.getY = function() {
-    return y;
-  };
-  this.getR = function() {
-    return r;
+    return this.y;
   };
   this.getAimX = function() {
-    return aimX;
+    return this.aimX;
   };
   this.getAimY = function() {
-    return aimY;
+    return this.aimY;
   };
   this.getAim = function() {
-    return {x: aimX, y: aimY};
+    return {x: this.aimX, y: this.aimY};
+  };
+  this.getPosition = function() {
+    return {x: this.x, y: this.y};
   };
   this.setX = function(newX) {
-    x = newX;
+    this.x = newX;
   };
   this.setY = function(newY) {
-    y = newY;
-  };
-  this.setR = function(newR) {
-    r = newR;
+    this.y = newY;
   };
   this.setAimX = function(newAimX) {
-    aimX = newAimX;
+    this.aimX = newAimX;
   };
   this.setAimY = function(newAimY) {
-    aimY = newAimY;
+    this.aimY = newAimY;
   };
   this.setAim = function(newAim) {
-    aimX = newAim.x;
-    aimY = newAim.y;
+    this.aimX = newAim.x;
+    this.aimY = newAim.y;
+  };
+  this.setPosition = function(pos) {
+    this.x = pos.x;
+    this.y = pos.y;
+  };
+  this.setTime = function(time) {
+    this.t = time;
+  };
+  this.setUpdated = function(d) {
+    this.updated = d;
   };
 };
 

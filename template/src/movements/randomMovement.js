@@ -1,5 +1,6 @@
-RandomMovement = function(obj) {
+RandomMovement = function(obj, remote) {
   this.obj = obj;
+  this.remote = remote;
 };
 RandomMovement.prototype.setAim = function () {
   this._aimX = parseInt(cc.random0To1() * (_size.width - this.obj.$width)) + this.obj.$width / 2;

@@ -4,13 +4,17 @@ var MonsterSprite = cc.PhysicsSprite.extend({
   _targetsDestroyed: 0,
   _health: 1,
   ctor: function (_default, config) {
+    if (!config) {
+      config = {};
+    }
     this._super(_default.sprite);
-    this.scale = _default.scale || 1;
+    this.scale = _default.scale;
     this._power = _default.power;
     this._speed = _default.speed;
     this._health = _default.health;
     this._colorExplosion = _default.colorExplosion;
     this._colorShoot = _default.colorShoot;
+    this._remote = config.remote;
     
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
@@ -27,23 +31,41 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
     // Create Movement
-    this.configMovement(_default);
+    if (config.moveType) {
+      this.configMovement(config);
+    } else {
+      this.configMovement(_default);
+    }
     
     if (config.showTime) {
       var monster = this;
       this.scheduleOnce(function() {
         _layer.addChild(monster, 1);
-        monster.update();
+        !config.remote && monster.update();
         _layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
       }, config.showTime);
     } else {
       _layer.addChild(this, 1);
-      this.update();
+      !config.remote && this.update();
       _layer.addExplosion(EXPLOSION_YELLOW, this.position, 0, this._colorExplosion);
     }
   },
   update: function(dt) {
     this.move.walk();
+  },
+  setup: function(data) {
+    var walk = false;
+    if ((this._aimX !== data.aimX) || (this._aimY !== data.aimY)) {
+      walk = true;
+    }
+    if (walk) {
+      console.log("///data::", data);
+      // this.stopAllActions();
+      this.setPosition(cc.p(data.x, data.y));
+      this._aimX = data.aimX;
+      this._aimY = data.aimY;
+      this.move.walk();
+    }
   },
   hurt: function(power) {
     --this._health;
@@ -82,12 +104,22 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.position = _pos;
   },
   configMovement: function(config) {
-    if (config.moveType === RANDOM_MOVE) {
-      this.move = new RandomMovement(this);
-    } else if (config.moveType === FOLLOW_MOVE) {
-      this.move = new FollowMovement(this);
-    } else if (config.moveType === ATTACK_MOVE) {
-      this.move = new AttackMovement(this);
+    if (this._remote) {
+      if (config.moveType === RANDOM_MOVE) {
+        this.move = new RandomMovementRemote(this);
+      } else if (config.moveType === FOLLOW_MOVE) {
+        this.move = new FollowMovementRemote(this);
+      } else if (config.moveType === ATTACK_MOVE) {
+        this.move = new AttackMovementRemote(this);
+      }
+    } else {
+      if (config.moveType === RANDOM_MOVE) {
+        this.move = new RandomMovement(this);
+      } else if (config.moveType === FOLLOW_MOVE) {
+        this.move = new FollowMovement(this);
+      } else if (config.moveType === ATTACK_MOVE) {
+        this.move = new AttackMovement(this);
+      }
     }
   }
 });

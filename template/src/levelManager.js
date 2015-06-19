@@ -23,7 +23,7 @@ var LevelManager = cc.Class.extend({
     if (this.multiplayer) {
       return GAME.MULTIPLAYER[level];
     } else {
-      return GAME.LEVELS[level]
+      return GAME.LEVELS[level];
     }
   },
   nextLevel: function() {
@@ -36,7 +36,6 @@ var LevelManager = cc.Class.extend({
     this._layer = layer;
     // Load Background
     _bg = BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
-    cc.log("#LM", this.level);
     // Load Player
     for (i = this.level.PLAYERS.length - 1; i >= 0; i--) {
       this.addPlayer(this.level.PLAYERS[i]);
@@ -48,9 +47,7 @@ var LevelManager = cc.Class.extend({
   },
   addPlayer: function(config) {
     _player = this._layer._player = new PlayerSprite(config);
-    // _player.setup(this._layer.space, config);
     this._layer._players.push(_player);
-    // this._layer.addChild(this._layer._player, 0);
     addCollisionCallbacks(this._layer.space, _player.collision, _player.separate);
   },
   addMonster: function(config) {
