@@ -35,8 +35,11 @@ var Multiplayer = cc.Class.extend({
     this.socket.on("remove player", this.onRemovePlayer);
     
     this.socket.on("new monster", this.onNewMonster);
+    this.socket.on("new monsters", this.onNewMonsters);
+    this.socket.on("remove monster", this.onRemoveMonster);
     this.socket.on("update monster", this.onUpdateMonster);
     this.socket.on("update monsters", this.onUpdateMonsters);
+    this.socket.on("hurt monster", this.onHurtMonster);
     
     _players = this.players;
     _monsters = this._layer._monsters;
@@ -68,7 +71,7 @@ var Multiplayer = cc.Class.extend({
   	_players.push(newPlayer);
   },
   onMovePlayer: function(data) {
-    cc.log("onMovePlayer ...", data);
+    // cc.log("onMovePlayer ...", data);
     var movePlayer = playerById(data.id);
   	// Player not found
   	if (!movePlayer) {
@@ -91,27 +94,43 @@ var Multiplayer = cc.Class.extend({
   },
   onNewMonster: function(data) {
     cc.log("New monster connected: " + data.id);
-    // Initialise the new player
   	var newMonster = new MonsterSprite(BUGGER1, {
   	  x: data.x,
   	  y: data.y,
   	  aimX: data.aimX,
   	  aimY: data.aimY,
+  	  health: data.health,
   	  remote: true
   	});
   	newMonster.id = data.id;
   	// Add new player to the remote players array
   	_monsters.push(newMonster);
   },
+  onNewMonsters: function(data) {
+    cc.log("New monsters connected: " + data.monsters.length);
+    var newMonster;
+    var i = data.monsters.length - 1;
+    for (i; i >= 0; i--) {
+    	newMonster = new MonsterSprite(BUGGER1, {
+    	  x: data.monsters[i].x,
+    	  y: data.monsters[i].y,
+    	  aimX: data.monsters[i].aimX,
+    	  aimY: data.monsters[i].aimY,
+    	  health: data.monsters[i].health,
+    	  remote: true
+    	});
+    	newMonster.id = data.monsters[i].id;
+    	// Add new player to the remote players array
+    	_monsters.push(newMonster);
+    }
+  },
   onUpdateMonster: function(data) {
-    cc.log("onUpdateMonster _>", data);
     var monster = monsterById(data.id);
     if (monster) {
       monster.setup(data);
     }
   },
   onUpdateMonsters: function(data) {
-    cc.log("onUpdateMonsters", data);
     var i = data.monsters.length - 1, monster;
     for (i; i >= 0; i--) {
       monster = monsterById(data.monsters[i].id);
@@ -120,9 +139,30 @@ var Multiplayer = cc.Class.extend({
       }
     }
   },
+  onRemoveMonster: function(data) {
+    var removeMonster = monsterById(data.id);
+  	if (!removeMonster) {
+  		cc.log("Monster not found: " + data.id);
+  		return;
+  	}
+  	removeMonster.destroy();
+  },
+  onHurtMonster: function(data) {
+    var hurtMonster = monsterById(data.id);
+  	if (!hurtMonster) {
+  		cc.log("Monster not found: " + data.id);
+  		return;
+  	}
+  	--hurtMonster._health;
+  },
   emitMovePlayer: function(data) {
-    cc.log("emitMovePlayer :: ", data);
     _socket.emit("move player", data);
+  },
+  emitRemoveMonster: function(data) {
+    _socket.emit("remove monster", data);
+  },
+  emitHurtMonster: function(data) {
+    _socket.emit("hurt monster", data);
   }
 });
 

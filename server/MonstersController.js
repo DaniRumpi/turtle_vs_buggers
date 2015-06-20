@@ -51,8 +51,6 @@ var MonstersController = function (Game, Monster, monsters) {
       monster.y += (monster.aimY - monster.y) * percent;
     }
     monster.setDistance(monster.d - d2);
-    // monster.setTime(monster.updated - t2);
-    // monster.setUpdated(t2);
   };
   this.getRandomPosition = function () {
     var _posX, _posY;
@@ -79,6 +77,7 @@ var MonstersController = function (Game, Monster, monsters) {
     monster.setX(pos.x);
     monster.setY(pos.y);
     monster.speed = dataMons.speed;
+    monster.health = dataMons.health;
     monster.id = ++id;
     return monster;
   };

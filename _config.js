@@ -12,7 +12,7 @@ BUGGER1 = {
   moveType: RANDOM_MOVE,
   power: 1,
   speed: 90.0,
-  health: 1,
+  health: 10,
   scale: 0.3,
   sprite: RES.bugger1,
   colorExplosion: "red",

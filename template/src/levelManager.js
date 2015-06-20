@@ -35,7 +35,7 @@ var LevelManager = cc.Class.extend({
   setup: function(layer) {
     this._layer = layer;
     // Load Background
-    _bg = BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
+    BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
     // Load Player
     for (i = this.level.PLAYERS.length - 1; i >= 0; i--) {
       this.addPlayer(this.level.PLAYERS[i]);
@@ -55,9 +55,9 @@ var LevelManager = cc.Class.extend({
     this._layer._monsters.push(monster);
   },
   checkLevel: function() {
-    if (this._layer._players.length) {
-      return this._layer._player._targetsDestroyed >= this.level.MAX_MONSTERS;
-    }
+    // if (this._layer._players.length) {
+    //   return this._layer._player._targetsDestroyed >= this.level.MAX_MONSTERS;
+    // }
     return false;
   },
   toString: function() {

@@ -11,11 +11,14 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.scale = _default.scale;
     this._power = _default.power;
     this._speed = _default.speed;
-    this._health = _default.health;
     this._colorExplosion = _default.colorExplosion;
     this._colorShoot = _default.colorShoot;
     this._remote = config.remote;
-    
+    if (config.health === undefined) {
+      this._health = _default.health;
+    } else {
+      this._health = config.health;
+    }
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
     this.setRandomPosition(config);
@@ -36,12 +39,9 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     } else {
       this.configMovement(_default);
     }
-    cc.log("_default.showTime::", _default.showTime);
     if (_default.showTime) {
       var monster = this;
-      cc.log("[scheduleOnce]");
       _layer.scheduleOnce(function() {
-        cc.log("scheduleOnce::", _default.showTime);
         _layer.addChild(monster, 1);
         !config.remote && monster.update();
         _layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
@@ -50,6 +50,9 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       _layer.addChild(this, 1);
       !config.remote && this.update();
       _layer.addExplosion(EXPLOSION_YELLOW, this.position, 0, this._colorExplosion);
+    }
+    if (config.aimX !== undefined) {
+      this.setup(config);
     }
   },
   update: function(dt) {
@@ -61,7 +64,6 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       walk = true;
     }
     if (walk) {
-      console.log("///data::", data);
       this.stopAllActions();
       this.setPosition(cc.p(data.x, data.y));
       this._aimX = data.aimX;
@@ -72,8 +74,14 @@ var MonsterSprite = cc.PhysicsSprite.extend({
   hurt: function(power) {
     --this._health;
     if (!this._health) {
+      if (_layer.multiplayer) {
+        _layer.multiplayer.emitRemoveMonster({id: this.id});
+      }
       this.destroy();
       return true;
+    }
+    if (_layer.multiplayer) {
+      _layer.multiplayer.emitHurtMonster({id: this.id});
     }
     return false;
   },

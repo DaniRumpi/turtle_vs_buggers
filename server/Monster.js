@@ -2,6 +2,7 @@ var Monster = function(data) {
   this.x = data.x;
   this.y = data.y;
   this.speed = data.speed;
+  this.health = data.health;
   
   this.id = data.id;
   this.getX = function() {
@@ -21,6 +22,9 @@ var Monster = function(data) {
   };
   this.getPosition = function() {
     return {x: this.x, y: this.y};
+  };
+  this.getHealth = function() {
+    return this.health;
   };
   this.setX = function(newX) {
     this.x = newX;
@@ -50,6 +54,9 @@ var Monster = function(data) {
   };
   this.setUpdated = function(d) {
     this.updated = d;
+  };
+  this.setHealth = function(h) {
+    this.health = h;
   };
 };
 

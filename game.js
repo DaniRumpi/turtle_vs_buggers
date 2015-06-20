@@ -57,14 +57,13 @@ var socket,
 io.on('connection', onSocketConnection);
 // New socket connection
 function onSocketConnection(client) {
-  clients++;
 	console.log("New player has connected: " + client.id);
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
+	client.on("remove monster", onRemoveMonster);
+	client.on("hurt monster", onHurtMonster);
 }
-
-
 
 function onClientDisconnect() {
   console.log("Player has disconnected: " + this.id);
@@ -77,6 +76,10 @@ function onClientDisconnect() {
 	clients--;
 	// Remove player from players array
 	players.splice(players.indexOf(removePlayer), 1);
+	if (clients === 0) {
+	  monsters.splice(0);
+	  players.splice(0);
+	}
 	// Broadcast removed player to connected socket clients
 	this.broadcast.emit("remove player", {id: this.id});
 }
@@ -92,7 +95,7 @@ function onNewPlayer(data) {
   });
   
   // Send existing players to the new player
-	var i, existingPlayer, existingMonster;
+	var i, existingPlayer;
 	for (i = players.length - 1; i >= 0; i--) {
 		existingPlayer = players[i];
 		this.emit("new player", {
@@ -102,19 +105,23 @@ function onNewPlayer(data) {
 		  r: existingPlayer.getR()
 		});
 	}
+	var existingMonsters = [], existingMonster;
 	for (i = monsters.length - 1; i >= 0; i--) {
 		existingMonster = monsters[i];
-		this.emit("new monster", {
+		existingMonsters.push({
 		  id: existingMonster.id,
 		  x: existingMonster.getX(),
 		  y: existingMonster.getY(),
+		  health: existingMonster.getHealth(),
       aimX: existingMonster.getAimX(),
       aimY: existingMonster.getAimY()
 		});
 	}
+	this.emit("new monsters", {monsters: existingMonsters});
 	
 	// Add new player to the players array
 	players.push(newPlayer);
+	clients++;
 }
 
 function onMovePlayer(data) {
@@ -137,6 +144,27 @@ function onMovePlayer(data) {
   });
 }
 
+function onRemoveMonster(data) {
+  var removedMonster = monsterById(data.id);
+  if (!removedMonster) {
+    console.log("Monster not found: " + data.id);
+    return;
+  }
+  
+  monsters.splice(monsters.indexOf(removedMonster), 1);
+  this.broadcast.emit("remove monster", data);
+}
+
+function onHurtMonster(data) {
+  var removedMonster = monsterById(data.id);
+  if (!removedMonster) {
+    console.log("Monster not found: " + data.id);
+    return;
+  }
+  removedMonster.health--;
+  this.broadcast.emit("hurt monster", data);
+}
+
 /**************************************************
 ** MAIN LOOP
 **************************************************/
@@ -150,7 +178,8 @@ var interval = setInterval(function() {
 		io.sockets.emit("new monster", {
 		  id: newMonster.id,
 		  x: newMonster.getX(),
-		  y: newMonster.getY()
+		  y: newMonster.getY(),
+		  health: newMonster.getHealth()
 		});
 		monsters.push(newMonster);
 	}
@@ -167,7 +196,7 @@ var interval = setInterval(function() {
       aimY: existingMonster.getAimY()
 		});
 	}
-}, 500);
+}, 250);
 
 /**************************************************
 ** GAME HELPER FUNCTIONS
@@ -181,7 +210,14 @@ function playerById(id) {
 	}
 	return false;
 }
-
+function monsterById(id) {
+	var i = monsters.length - 1;
+	for (i; i >= 0; i--) {
+		if (monsters[i].id === id)
+			return monsters[i];
+	}
+	return false;
+}
 
 // init
 app.listen(8000);

@@ -8,13 +8,9 @@ RandomMovementRemote.prototype.setRotationAim = function () {
 };
 RandomMovementRemote.prototype.walk = function () {
   var pos = this.obj.position;
-  console.log("pos::", pos);
   var aim = cc.p(this.obj._aimX, this.obj._aimY);
-  console.log("aim::", aim);
   var dist = cc.pDistance(aim, pos);
-  console.log("dist::", dist);
   var time = dist / this.obj._speed;
-  console.log("time::", time, this.obj._speed);
 
   var actionMove = cc.MoveTo.create(time, aim);
   
