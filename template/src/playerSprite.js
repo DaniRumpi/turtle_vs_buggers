@@ -57,7 +57,6 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   setup: function(data) {
     this.setPosition(cc.p(data.x, data.y));
     this.rotation = data.r;
-    cc.log("setup>>", data);
   },
   play: function() {
     if (!this._playing) {
@@ -163,11 +162,6 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       update = true;
     }
     if (update && _layer.multiplayer) {
-      cc.log("UPDATE::", {
-        x: this.position.x,
-        y: this.position.y,
-        r: this.rotation
-      });
       _layer.multiplayer.emitMovePlayer({
         x: this.position.x,
         y: this.position.y,

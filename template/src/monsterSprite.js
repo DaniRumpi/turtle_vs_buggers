@@ -36,14 +36,16 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     } else {
       this.configMovement(_default);
     }
-    
-    if (config.showTime) {
+    cc.log("_default.showTime::", _default.showTime);
+    if (_default.showTime) {
       var monster = this;
-      this.scheduleOnce(function() {
+      cc.log("[scheduleOnce]");
+      _layer.scheduleOnce(function() {
+        cc.log("scheduleOnce::", _default.showTime);
         _layer.addChild(monster, 1);
         !config.remote && monster.update();
         _layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
-      }, config.showTime);
+      }, _default.showTime);
     } else {
       _layer.addChild(this, 1);
       !config.remote && this.update();
@@ -60,7 +62,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     }
     if (walk) {
       console.log("///data::", data);
-      // this.stopAllActions();
+      this.stopAllActions();
       this.setPosition(cc.p(data.x, data.y));
       this._aimX = data.aimX;
       this._aimY = data.aimY;

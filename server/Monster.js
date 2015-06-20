@@ -45,6 +45,9 @@ var Monster = function(data) {
   this.setTime = function(time) {
     this.t = time;
   };
+  this.setDistance = function(distance) {
+    this.d = distance;
+  };
   this.setUpdated = function(d) {
     this.updated = d;
   };

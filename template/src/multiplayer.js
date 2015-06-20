@@ -6,7 +6,7 @@ var _players = [], _monsters, _socket;
 function playerById(id) {
 	var i;
 	for (i = 0; i < _players.length; i++) {
-		if (_players[i].id == id)
+		if (_players[i].id === id)
 			return _players[i];
 	}
 	return false;
@@ -14,7 +14,7 @@ function playerById(id) {
 function monsterById(id) {
 	var i;
 	for (i = 0; i < _monsters.length; i++) {
-		if (_monsters[i].id == id)
+		if (_monsters[i].id === id)
 			return _monsters[i];
 	}
 	return false;
@@ -51,6 +51,8 @@ var Multiplayer = cc.Class.extend({
   },
   onSocketDisconnect: function() {
     cc.log("Disconnected from socket server");
+    _players.splice(0);
+    _monsters.splice(0);
   },
   onNewPlayer: function(data) {
     cc.log("New player connected: " + data.id);
@@ -131,4 +133,4 @@ Multiplayer.getInstance = function (layer) {
     _multiplayer = new Multiplayer(layer);
   }
   return _multiplayer;
-}
+};

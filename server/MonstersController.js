@@ -22,22 +22,37 @@ var MonstersController = function (Game, Monster, monsters) {
     var pow2 = (v1.y - v2.y) * (v1.y - v2.y);
     return Math.sqrt(pow1 + pow2);
   };
-  var calcTime = function (pos, aim, speed) {
-    return (calcDistance(aim, pos) / speed) * 1000;
+  var calcTime = function (dist, speed) {
+    return (dist / speed) * 1000;
   };
-  this.calcWalk = function (monster) {
+  this.calcWalk = function (monster, t2) {
     if (monster.aimX !== undefined) {
       monster.setPosition(monster.getAim());
     }
     monster.setAim(this.getPositionAim());
-    monster.setUpdated(new Date().getTime());
-    var time = calcTime(monster.getPosition(), monster.getAim(), monster.speed);
+    monster.setUpdated(t2);
+    var dist = calcDistance(monster.getPosition(), monster.getAim());
+    var time = calcTime(dist, monster.speed);
+    monster.setDistance(dist);
     monster.setTime(time);
-    console.log("==== calcWalk ====");
-    console.log("pos::", monster.getPosition());
-    console.log("aim::", monster.getAim());
-    console.log("time::", time);
-    console.log("speed::", monster.speed);
+  };
+  this.calcPositionWalking = function (monster, t2) {
+    var d2, percent;
+    d2 = monster.speed * (t2 - monster.updated) / 1000;
+    percent = d2 * 100 / monster.d;
+    if (monster.x - monster.aimX > 0) {
+      monster.x -= (monster.x - monster.aimX) * percent;
+    } else {
+      monster.x += (monster.aimX - monster.x) * percent;
+    }
+    if (monster.y - monster.aimY > 0) {
+      monster.y -= (monster.y - monster.aimY) * percent;
+    } else {
+      monster.y += (monster.aimY - monster.y) * percent;
+    }
+    monster.setDistance(monster.d - d2);
+    // monster.setTime(monster.updated - t2);
+    // monster.setUpdated(t2);
   };
   this.getRandomPosition = function () {
     var _posX, _posY;
@@ -73,7 +88,7 @@ var MonstersController = function (Game, Monster, monsters) {
   };
   this.getRandomMonsters = function() {
     var monsters = [];
-    if (this.monsters.length < 1  ) {
+    if (this.monsters.length < 3) {
       var min = Game.MIN_MONSTERS;
       var max = Game.MAX_MONSTERS - Game.MIN_MONSTERS;
       var n = parseInt(Math.random() * max) + min;
@@ -91,8 +106,10 @@ var MonstersController = function (Game, Monster, monsters) {
     for (i; i >= 0; i--) {
       if (!this.monsters[i].getAimX() ||
           (newDate - this.monsters[i].updated >= this.monsters[i].t)) {
-        this.calcWalk(this.monsters[i]);
+        this.calcWalk(this.monsters[i], newDate);
         updated.push(this.monsters[i]);
+      } else {
+        this.calcPositionWalking(this.monsters[i], newDate);
       }
     }
     return updated;

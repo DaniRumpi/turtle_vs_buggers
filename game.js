@@ -47,7 +47,8 @@ var GAME = require('./_config.js').GAME;
 **************************************************/
 var socket,
 	players = [],
-	monsters = [];
+	monsters = [],
+	clients = 0;
 
 /**************************************************
 ** GAME INITIALISATION
@@ -56,39 +57,13 @@ var socket,
 io.on('connection', onSocketConnection);
 // New socket connection
 function onSocketConnection(client) {
+  clients++;
 	console.log("New player has connected: " + client.id);
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
 }
 
-var monstersController = new MonstersController(GAME, Monster, monsters);
-var interval = setInterval(function() {
-  var newMonsters = monstersController.getRandomMonsters();
-  var newMonster, i;
-  for (i = newMonsters.length - 1; i >= 0; i--) {
-		newMonster = newMonsters[i];
-		io.sockets.emit("new monster", {
-		  id: newMonster.id,
-		  x: newMonster.getX(),
-		  y: newMonster.getY()
-		});
-		monsters.push(newMonster);
-	}
-
-  var updated = monstersController.updateAll();
-  var existingMonster;
-  for (i = monsters.length - 1; i >= 0; i--) {
-		existingMonster = monsters[i];
-		io.sockets.emit("update monster", {
-		  id: existingMonster.id,
-		  x: existingMonster.getX(),
-		  y: existingMonster.getY(),
-      aimX: existingMonster.getAimX(),
-      aimY: existingMonster.getAimY()
-		});
-	}
-}, 200);
 
 
 function onClientDisconnect() {
@@ -99,6 +74,7 @@ function onClientDisconnect() {
 		console.log("Player not found: " + this.id);
 		return;
 	}
+	clients--;
 	// Remove player from players array
 	players.splice(players.indexOf(removePlayer), 1);
 	// Broadcast removed player to connected socket clients
@@ -160,6 +136,38 @@ function onMovePlayer(data) {
     r: movePlayer.getR()
   });
 }
+
+/**************************************************
+** MAIN LOOP
+**************************************************/
+var monstersController = new MonstersController(GAME, Monster, monsters);
+var interval = setInterval(function() {
+  if (clients <= 0) return;
+  var newMonsters = monstersController.getRandomMonsters();
+  var newMonster, i;
+  for (i = newMonsters.length - 1; i >= 0; i--) {
+		newMonster = newMonsters[i];
+		io.sockets.emit("new monster", {
+		  id: newMonster.id,
+		  x: newMonster.getX(),
+		  y: newMonster.getY()
+		});
+		monsters.push(newMonster);
+	}
+
+  var updated = monstersController.updateAll();
+  var existingMonster;
+  for (i = monsters.length - 1; i >= 0; i--) {
+		existingMonster = monsters[i];
+		io.sockets.emit("update monster", {
+		  id: existingMonster.id,
+		  x: existingMonster.getX(),
+		  y: existingMonster.getY(),
+      aimX: existingMonster.getAimX(),
+      aimY: existingMonster.getAimY()
+		});
+	}
+}, 500);
 
 /**************************************************
 ** GAME HELPER FUNCTIONS
