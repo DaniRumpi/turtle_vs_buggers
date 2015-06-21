@@ -77,3 +77,12 @@ function setup_HELPER_COLORS() {
     default: cc.color(255,255,255)
   };
 }
+
+function getMonsterByMove(type) {
+  var i = MONSTERS.length - 1;
+  for (i; i >= 0; i--) {
+    if (MONSTERS[i].moveType === type) {
+      return MONSTERS[i];
+    }
+  }
+}

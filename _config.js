@@ -12,7 +12,7 @@ BUGGER1 = {
   moveType: RANDOM_MOVE,
   power: 1,
   speed: 90.0,
-  health: 10,
+  health: 1,
   scale: 0.3,
   sprite: RES.bugger1,
   colorExplosion: "red",
@@ -20,7 +20,7 @@ BUGGER1 = {
 BUGGER2 = {
   moveType: FOLLOW_MOVE,
   power: 2,
-  speed: 85.0,
+  speed: 89.0,
   health: 4,
   scale: 0.3,
   sprite: RES.bugger2,
@@ -29,7 +29,7 @@ BUGGER2 = {
 BUGGER3 = {
   moveType: ATTACK_MOVE,
   power: 10,
-  speed: 85.0,
+  speed: 87.0,
   health: 10,
   scale: 0.3,
   sprite: RES.bugger3,
@@ -40,7 +40,13 @@ BUGGER3 = {
 GAME = {
   MAX_MONSTERS: 10,
   MIN_MONSTERS: 1,
-  MONSTERS: [BUGGER1, BUGGER2, BUGGER3]
+  MONSTERS: [BUGGER3, BUGGER2, BUGGER1],
+  RANDOM_MOVE: RANDOM_MOVE,
+  FOLLOW_MOVE: FOLLOW_MOVE,
+  ATTACK_MOVE: ATTACK_MOVE,
+  SIZE: {width: 800, height: 480},
+  MIDDLE: {width: 90, height: 70},
+  MONSTER_SIZE: {width: 100, height: 100}
 };
 
 exports.GAME = GAME;

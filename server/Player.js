@@ -1,42 +1,29 @@
 var Player = function(data) {
-  var x = data.x,
-    y = data.y,
-    r = data.r,
-    id;
+  this.x = data.x || GAME.SIZE.width / 2;
+  this.y = data.y || GAME.SIZE.height / 2;
+  this.r = data.r;
   
-  var getX = function() {
-    return x;
+  this.getX = function() {
+    return this.x;
   };
-
-  var getY = function() {
-    return y;
+  this.getY = function() {
+    return this.y;
   };
-
-  var getR = function() {
-    return r;
+  this.getR = function() {
+    return this.r;
   };
-  
-  var setX = function(newX) {
-    x = newX;
+  this.getPosition = function() {
+    return {x: this.x, y: this.y};
   };
-
-  var setY = function(newY) {
-    y = newY;
+  this.setX = function(newX) {
+    this.x = newX;
   };
-  
-  var setR = function(newR) {
-    r = newR;
+  this.setY = function(newY) {
+    this.y = newY;
   };
-
-  return {
-    getX: getX,
-    getY: getY,
-    getR: getR,
-    setX: setX,
-    setY: setY,
-    setR: setR,
-    id: id
-  }
+  this.setR = function(newR) {
+    this.r = newR;
+  };
 };
 
 exports.Player = Player;

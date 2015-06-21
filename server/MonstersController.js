@@ -1,12 +1,13 @@
-var MonstersController = function (Game, Monster, monsters) {
-  this.Game = Game;
-  this.Monster = Monster;
+
+var GAME = require('../_config.js').GAME;
+var Monster = require("./Monster").Monster;
+var RandomMovement = require("./RandomMovement").RandomMovement;
+var FollowMovement = require("./FollowMovement").FollowMovement;
+
+var MonstersController = function (monsters, players) {
+  this.randomMove = new RandomMovement(GAME);
+  this.followMove = new FollowMovement(GAME, players);
   this.monsters = monsters;
-  
-  var _size = {width: 800, height: 480};
-  var _middle = {width: 90, height: 70};
-  var _monSize = {width: 100, height: 100};
-  
   var id = 0;
 
   var find = function (id) {
@@ -17,24 +18,53 @@ var MonstersController = function (Game, Monster, monsters) {
           return this.monsters[i];
     }
   };
-  var calcDistance = function (v1, v2) {
-    var pow1 = (v1.x - v2.x) * (v1.x - v2.x);
-    var pow2 = (v1.y - v2.y) * (v1.y - v2.y);
-    return Math.sqrt(pow1 + pow2);
-  };
-  var calcTime = function (dist, speed) {
-    return (dist / speed) * 1000;
-  };
-  this.calcWalk = function (monster, t2) {
-    if (monster.aimX !== undefined) {
-      monster.setPosition(monster.getAim());
+  this.getRandomPosition = function () {
+    var _posX, _posY;
+    while (true) {
+      _posX = parseInt(Math.random() * (GAME.SIZE.width - GAME.MONSTER_SIZE.width)) + GAME.MONSTER_SIZE.width / 2;
+      _posY = parseInt(Math.random() * (GAME.SIZE.height - GAME.MONSTER_SIZE.height)) + GAME.MONSTER_SIZE.height / 2;
+      if (Math.abs(_posX - (GAME.SIZE.width / 2)) > GAME.MIDDLE.width &&
+          Math.abs(_posY - (GAME.SIZE.height / 2)) > GAME.MIDDLE.height) {
+        break;
+      }
     }
-    monster.setAim(this.getPositionAim());
-    monster.setUpdated(t2);
-    var dist = calcDistance(monster.getPosition(), monster.getAim());
-    var time = calcTime(dist, monster.speed);
-    monster.setDistance(dist);
-    monster.setTime(time);
+    return {x: _posX, y: _posY};
+  };
+  this.getRandomMonster = function () {
+    var n = Math.round(Math.random() * 2);
+    return GAME.MONSTERS[n];
+  };
+  this.getRandomSpeed = function(speed) {
+    return speed + (Math.random() * 20) - 10;
+  };
+  this.new = function() {
+    var dataMons = this.getRandomMonster();
+    var monster = new Monster(dataMons);
+    var pos = this.getRandomPosition();
+    monster.moveType = dataMons.moveType;
+    monster.setX(pos.x);
+    monster.setY(pos.y);
+    monster.speed = this.getRandomSpeed(dataMons.speed);
+    monster.health = dataMons.health;
+    monster.id = ++id;
+    return monster;
+  };
+  this.update = function (data) {
+    var monster = Monster.find(data.id);
+    monster.update(data);
+  };
+  this.getRandomMonsters = function() {
+    var monsters = [];
+    if (this.monsters.length < 3) {
+      var min = GAME.MIN_MONSTERS;
+      var max = GAME.MAX_MONSTERS - GAME.MIN_MONSTERS;
+      var n = parseInt(Math.random() * max) + min;
+      var i;
+      for (i = n - 1; i >= 0; i--) {
+        monsters.push(this.new());
+      }
+    }
+    return monsters;
   };
   this.calcPositionWalking = function (monster, t2) {
     var d2, percent;
@@ -52,66 +82,39 @@ var MonstersController = function (Game, Monster, monsters) {
     }
     monster.setDistance(monster.d - d2);
   };
-  this.getRandomPosition = function () {
-    var _posX, _posY;
-    while (true) {
-      _posX = parseInt(Math.random() * (_size.width - _monSize.width)) + _monSize.width / 2;
-      _posY = parseInt(Math.random() * (_size.height - _monSize.height)) + _monSize.height / 2;
-      if (Math.abs(_posX - (_size.width / 2)) > _middle.width &&
-          Math.abs(_posY - (_size.height / 2)) > _middle.height) {
-        break;
-      }
+  this.calcWalk = function(monster, t2) {
+    if (monster.moveType === GAME.RANDOM_MOVE) {
+      this.randomMove.calcWalk(monster, t2);
+    } else { // FOLLOW_MOVE & ATTACK_MOVE
+      this.followMove.calcWalk(monster, t2);
     }
-    return {x: _posX, y: _posY};
   };
-  this.getPositionAim = function() {
-    var _posX, _posY;
-    _posX = parseInt(Math.random() * (_size.width - _monSize.width)) + _monSize.width / 2;
-    _posY = parseInt(Math.random() * (_size.height - _monSize.height)) + _monSize.height / 2;
-    return {x: _posX, y: _posY};
-  };
-  this.new = function() {
-    var dataMons = this.Game.MONSTERS.slice(0, 1)[0];
-    var monster = new Monster(dataMons);
-    var pos = this.getRandomPosition();
-    monster.setX(pos.x);
-    monster.setY(pos.y);
-    monster.speed = dataMons.speed;
-    monster.health = dataMons.health;
-    monster.id = ++id;
-    return monster;
-  };
-  this.update = function(data) {
-    var monster = Monster.find(data.id);
-    monster.update(data);
-  };
-  this.getRandomMonsters = function() {
-    var monsters = [];
-    if (this.monsters.length < 3) {
-      var min = Game.MIN_MONSTERS;
-      var max = Game.MAX_MONSTERS - Game.MIN_MONSTERS;
-      var n = parseInt(Math.random() * max) + min;
-      var i;
-      for (i = n - 1; i >= 0; i--) {
-        monsters.push(this.new());
-      }
+  this.getRandomShoot = function() {
+    if (Math.random() > 0.8) { // 0.2 probability
+      return Math.random();
     }
-    return monsters;
   };
-  this.updateAll = function() {
-    var updated = [];
+  this.updateAll = function () {
+    var monstersAttack = [], attack;
     var newDate = new Date().getTime();
     var i = this.monsters.length - 1;
     for (i; i >= 0; i--) {
       if (!this.monsters[i].getAimX() ||
           (newDate - this.monsters[i].updated >= this.monsters[i].t)) {
         this.calcWalk(this.monsters[i], newDate);
-        updated.push(this.monsters[i]);
       } else {
         this.calcPositionWalking(this.monsters[i], newDate);
       }
+      // ATTACK MODE
+      if (this.monsters[i].moveType === GAME.ATTACK_MOVE) {
+        attack = this.getRandomShoot();
+        if (attack) {
+          this.monsters[i].attack = attack;
+          monstersAttack.push(this.monsters[i]);
+        }
+      }
     }
-    return updated;
+    return monstersAttack;
   };
 };
 

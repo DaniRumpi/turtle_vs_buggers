@@ -41,10 +41,13 @@ var GameLayer = cc.Layer.extend({
     // collision
     var i, j, projectile, monster;
     for (i = this._projectiles.length - 1; i >= 0; i--) {
-      projectile = this._projectiles[i];
+        projectile = this._projectiles[i];
       for (j = projectile.targets.length - 1; j >= 0; j--) {
         target = projectile.targets[j];
         if (target.visible && cc.pDistance(projectile._position, target._position) <= target._ratio) {
+          if (_layer.multiplayer) {
+            _layer.multiplayer.emitRemoveProjectile(projectile);
+          }
           this._projectiles.splice(i, 1);
           if (target.hurt(projectile._power)) {
             projectile.origin._targetsDestroyed++;
@@ -65,19 +68,23 @@ var GameLayer = cc.Layer.extend({
   },
   onKeyReleased: function(e) {
     if (e === cc.KEY.space) {
-      _layer.shoot(_layer._player, _layer._monsters);
+      if (_layer.multiplayer) {
+        _layer._player._shoots++;
+        _layer.multiplayer.emitNewProjectile(true, _layer._player);
+      }
+      _layer.shoot(_layer, _layer._player, _layer._monsters);
     } else {
       _player.handleKey(e);
     }
   },
-  shoot: function(origin, target, power, delay) {
+  shoot: function(context, origin, target, delay) {
     if (!target) {
-      target = _layer._monsters;
+      target = context._monsters;
     }
     var projectile = new ProjectileSprite(res.projectile);
     var func = function() {
-      projectile.run(_layer, origin, target, power);
-      _layer._projectiles.push(projectile);
+      context._projectiles.push(projectile);
+      projectile.run(context, origin, target);
       _layer.addChild(projectile, 2);
     };
     if (delay) {

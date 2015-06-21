@@ -1,7 +1,7 @@
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
-var _players = [], _monsters, _socket;
+var _players = [], _monsters, _projectiles, _socket;
 // Find player by ID
 function playerById(id) {
 	var i;
@@ -19,12 +19,21 @@ function monsterById(id) {
 	}
 	return false;
 }
+function projectileFind(data) {
+	var i;
+	for (i = 0; i < _projectiles.length; i++) {
+		if (_projectiles[i].id === data.id && _projectiles[i]._shoots === data._shoots)
+			return _projectiles[i];
+	}
+	return false;
+}
 
 var Multiplayer = cc.Class.extend({
   _level: null,
   _layer: null,
   level: null,
   players: [],
+  _projectiles: [],
   ctor: function (gameLayer) {
     this._layer = gameLayer;
     _socket = this.socket = io("ws://localhost:8000");
@@ -41,11 +50,15 @@ var Multiplayer = cc.Class.extend({
     this.socket.on("update monsters", this.onUpdateMonsters);
     this.socket.on("hurt monster", this.onHurtMonster);
     
+    this.socket.on("new projectile", this.onNewProjectile);
+    this.socket.on("remove projectile", this.onRemoveProjectile);
+    
     _players = this.players;
     _monsters = this._layer._monsters;
+    _projectiles = this._projectiles;
   },
-  onSocketConnected: function() {
-    cc.log("Connected to socket server");
+  onSocketConnected: function(data) {
+    cc.log("Connected to socket server:", data);
     _socket.emit("new player", {
       x: _player.positionX,
       y: _player.positionY,
@@ -93,13 +106,13 @@ var Multiplayer = cc.Class.extend({
   	removePlayer.removeFromParent();
   },
   onNewMonster: function(data) {
-    cc.log("New monster connected: " + data.id);
-  	var newMonster = new MonsterSprite(BUGGER1, {
+  	var newMonster = new MonsterSprite(getMonsterByMove(data.moveType), {
   	  x: data.x,
   	  y: data.y,
   	  aimX: data.aimX,
   	  aimY: data.aimY,
   	  health: data.health,
+  	  speed: data.speed,
   	  remote: true
   	});
   	newMonster.id = data.id;
@@ -107,16 +120,16 @@ var Multiplayer = cc.Class.extend({
   	_monsters.push(newMonster);
   },
   onNewMonsters: function(data) {
-    cc.log("New monsters connected: " + data.monsters.length);
     var newMonster;
     var i = data.monsters.length - 1;
     for (i; i >= 0; i--) {
-    	newMonster = new MonsterSprite(BUGGER1, {
+    	newMonster = new MonsterSprite(getMonsterByMove(data.monsters[i].moveType), {
     	  x: data.monsters[i].x,
     	  y: data.monsters[i].y,
     	  aimX: data.monsters[i].aimX,
     	  aimY: data.monsters[i].aimY,
     	  health: data.monsters[i].health,
+    	  speed: data.monsters[i].speed,
     	  remote: true
     	});
     	newMonster.id = data.monsters[i].id;
@@ -155,14 +168,64 @@ var Multiplayer = cc.Class.extend({
   	}
   	--hurtMonster._health;
   },
+  onNewProjectile: function(data) {
+    if (data.origin.remote) {
+      _layer.shoot(_layer.multiplayer, data.origin);
+    } else {
+      var origin = monsterById(data.origin.id);
+      if (origin) {
+        cc.log("_layer._players >>", _layer._players, origin);
+        _layer.shoot(_layer, origin, _layer._players, data.origin.attack);
+      }
+    }
+  },
+  onRemoveProjectile: function(data) {
+    var projectile = projectileFind(data);
+    if (!projectile) {
+  		cc.log("Projectile not found: " + data.id, data._shoots);
+  		return;
+  	}
+  	cc.log("REMOVE PROJECTILE :: ", projectile);
+    projectile.setPosition(data.x, data.y);
+    projectile.autodestroy();
+  },
+  // ******************************
+  // Emitter
+  // ******************************
   emitMovePlayer: function(data) {
     _socket.emit("move player", data);
+  },
+  emitUpdatePlayerHealth: function(health) {
+    _socket.emit("update player health", {health: health});
   },
   emitRemoveMonster: function(data) {
     _socket.emit("remove monster", data);
   },
   emitHurtMonster: function(data) {
     _socket.emit("hurt monster", data);
+  },
+  emitNewProjectile: function(remote, origin, targets) {
+    _socket.emit("new projectile", {
+      origin: {
+        id: _socket.id,
+        x: origin.position.x,
+        y: origin.position.y,
+        rotation: origin.rotation,
+        _power: origin._power,
+        _shoots: origin._shoots,
+        _colorShoot: origin._colorShoot,
+        _colorExplosion: origin._colorExplosion,
+        remote: remote
+      }
+    });
+  },
+  emitRemoveProjectile: function(projectile) {
+    _socket.emit("remove projectile", {
+      id: _socket.id,
+      x: projectile._position.x,
+      y: projectile._position.y,
+      _shoots: projectile.origin._shoots
+    });
   }
 });
 

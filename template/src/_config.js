@@ -23,7 +23,7 @@ PLAYER_LEVEL2 = {
 PLAYER_LEVEL3 = {
   speed: 3,
   power: 1,
-  health: 9999,
+  health: 100,
   scale: 0.4,
   sprite: TURTLE_FRAMES,
   colorExplosion: "default",
@@ -32,7 +32,7 @@ PLAYER_LEVEL3 = {
 PLAYER = PLAYER_LEVEL3;
 
 LEVEL1 = {
-  MAX_MONSTERS: 4,
+  LIMIT_MONSTERS: 4,
   MONSTERS: [
     {
       moveType: RANDOM_MOVE,
@@ -82,7 +82,7 @@ LEVEL1 = {
   }
 };
 LEVEL2 = {
-  MAX_MONSTERS: 6,
+  LIMIT_MONSTERS: 6,
   MONSTERS: [
     {
       moveType: RANDOM_MOVE,
@@ -152,7 +152,7 @@ LEVEL2 = {
   }
 };
 LEVEL3 = {
-  MAX_MONSTERS: 8,
+  LIMIT_MONSTERS: 8,
   MONSTERS: [
     {
       moveType: RANDOM_MOVE,
@@ -255,8 +255,32 @@ BUGGER1 = {
   sprite: res.bugger1,
   colorExplosion: "red",
 };
+BUGGER2 = {
+  moveType: FOLLOW_MOVE,
+  power: 2,
+  speed: 89,
+  health: 4,
+  scale: 0.3,
+  sprite: res.bugger2,
+  colorExplosion: "yellow"
+};
+BUGGER3 = {
+  moveType: ATTACK_MOVE,
+  power: 10,
+  speed: 87,
+  health: 10,
+  scale: 0.3,
+  sprite: res.bugger3,
+  colorExplosion: "bg",
+  colorShoot: "bg"
+};
+// ********* //
+// MONSTERS  //
+// ********* //
+MONSTERS = [BUGGER3, BUGGER2, BUGGER1];
+
 LEVEL_MULTIPLAYER = {
-  MAX_MONSTERS: 10,
+  LIMIT_MONSTERS: 9999,
   MONSTERS: [],
   PLAYERS: [PLAYER],
   BG: {

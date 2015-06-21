@@ -37,9 +37,8 @@ function handler (req, res) {
 
 
 var Player = require("./server/Player").Player;
-var Monster = require("./server/Monster").Monster;
+// var Monster = require("./server/Monster").Monster;
 var MonstersController = require("./server/MonstersController").MonstersController;
-var GAME = require('./_config.js').GAME;
 
 
 /**************************************************
@@ -48,7 +47,9 @@ var GAME = require('./_config.js').GAME;
 var socket,
 	players = [],
 	monsters = [],
-	clients = 0;
+	projectiles = [],
+	clients = 0,
+	projectiles_id = 0;
 
 /**************************************************
 ** GAME INITIALISATION
@@ -61,8 +62,11 @@ function onSocketConnection(client) {
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
+	client.on("update player health", onUpdatePlayerHealth);
 	client.on("remove monster", onRemoveMonster);
 	client.on("hurt monster", onHurtMonster);
+	client.on("new projectile", onNewProjectile);
+	client.on("remove projectile", onRemoveProjectile);
 }
 
 function onClientDisconnect() {
@@ -102,7 +106,7 @@ function onNewPlayer(data) {
 		  id: existingPlayer.id,
 		  x: existingPlayer.getX(),
 		  y: existingPlayer.getY(),
-		  r: existingPlayer.getR()
+		  r: existingPlayer.getR(),
 		});
 	}
 	var existingMonsters = [], existingMonster;
@@ -113,8 +117,10 @@ function onNewPlayer(data) {
 		  x: existingMonster.getX(),
 		  y: existingMonster.getY(),
 		  health: existingMonster.getHealth(),
+		  speed: existingMonster.speed,
       aimX: existingMonster.getAimX(),
-      aimY: existingMonster.getAimY()
+      aimY: existingMonster.getAimY(),
+      moveType: existingMonster.moveType
 		});
 	}
 	this.emit("new monsters", {monsters: existingMonsters});
@@ -144,6 +150,15 @@ function onMovePlayer(data) {
   });
 }
 
+function onUpdatePlayerHealth(data) {
+  var player = playerById(this.id);
+  if (!player) {
+    console.log("Player not found: " + this.id);
+    return;
+  }
+  player.health = data.health;
+}
+
 function onRemoveMonster(data) {
   var removedMonster = monsterById(data.id);
   if (!removedMonster) {
@@ -156,19 +171,32 @@ function onRemoveMonster(data) {
 }
 
 function onHurtMonster(data) {
-  var removedMonster = monsterById(data.id);
-  if (!removedMonster) {
+  var hurtMonster = monsterById(data.id);
+  if (!hurtMonster) {
     console.log("Monster not found: " + data.id);
     return;
   }
-  removedMonster.health--;
+  hurtMonster.health--;
   this.broadcast.emit("hurt monster", data);
+}
+function removeProjectile(projectile) {
+  projectiles.splice(projectiles.indexOf(projectile), 1);
+}
+function onNewProjectile(projectile) {
+  projectiles.push(projectile);
+  this.broadcast.emit("new projectile", projectile);
+  setTimeout(function() {
+    removeProjectile(projectile);
+  }, 1500);
+}
+function onRemoveProjectile(projectile) {
+  this.broadcast.emit("remove projectile", projectile);
 }
 
 /**************************************************
 ** MAIN LOOP
 **************************************************/
-var monstersController = new MonstersController(GAME, Monster, monsters);
+var monstersController = new MonstersController(monsters, players);
 var interval = setInterval(function() {
   if (clients <= 0) return;
   var newMonsters = monstersController.getRandomMonsters();
@@ -179,12 +207,14 @@ var interval = setInterval(function() {
 		  id: newMonster.id,
 		  x: newMonster.getX(),
 		  y: newMonster.getY(),
-		  health: newMonster.getHealth()
+		  health: newMonster.getHealth(),
+		  moveType: newMonster.moveType,
+		  speed: newMonster.speed
 		});
 		monsters.push(newMonster);
 	}
 
-  var updated = monstersController.updateAll();
+  var monstersAttack = monstersController.updateAll();
   var existingMonster;
   for (i = monsters.length - 1; i >= 0; i--) {
 		existingMonster = monsters[i];
@@ -195,6 +225,15 @@ var interval = setInterval(function() {
       aimX: existingMonster.getAimX(),
       aimY: existingMonster.getAimY()
 		});
+	}
+	for (i = monstersAttack.length - 1; i >= 0; i--) {
+	  io.sockets.emit("new projectile", {
+		  origin: {
+		    id: monstersAttack[i].id,
+		    remote: false,
+		    attack: monstersAttack[i].attack
+		  }
+	  });
 	}
 }, 250);
 

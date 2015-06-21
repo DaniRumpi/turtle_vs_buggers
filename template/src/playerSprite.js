@@ -4,6 +4,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   _targetsDestroyed: 0,
   _power: 1,
   _speed: 2,
+  _shoots: 0,
   ctor: function (_default, config) {
     if (!config) {
       config = {};
@@ -49,6 +50,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     if (this._remote) {
       this.runAction(this.runningAction);
     } else {
+      this.schedule(this.emitUpdatePosition, 1);
       this.scheduleUpdate();
       this.addHealthLevel();
     }
@@ -110,6 +112,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       levelBar = (this._label.split("").slice(0, levelHealth)).join("");
     }
     this.label.setString(levelBar);
+    _layer.emitUpdatePlayerHealth(this.health);
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
@@ -162,12 +165,15 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       update = true;
     }
     if (update && _layer.multiplayer) {
-      _layer.multiplayer.emitMovePlayer({
-        x: this.position.x,
-        y: this.position.y,
-        r: this.rotation
-      });
+      this.emitUpdatePosition();
     }
+  },
+  emitUpdatePosition: function () {
+    _layer.multiplayer.emitMovePlayer({
+      x: this.position.x,
+      y: this.position.y,
+      r: this.rotation
+    });
   },
   setRandomRotation: function(config) {
     if (config.r) {

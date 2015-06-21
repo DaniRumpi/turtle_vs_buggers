@@ -1,5 +1,4 @@
 var MonsterSprite = cc.PhysicsSprite.extend({
-  _speed: 70,
   _power: 1,
   _targetsDestroyed: 0,
   _health: 1,
@@ -10,7 +9,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this._super(_default.sprite);
     this.scale = _default.scale;
     this._power = _default.power;
-    this._speed = _default.speed;
+    this._speed = config.speed || _default.speed;
     this._colorExplosion = _default.colorExplosion;
     this._colorShoot = _default.colorShoot;
     this._remote = config.remote;
@@ -116,11 +115,11 @@ var MonsterSprite = cc.PhysicsSprite.extend({
   configMovement: function(config) {
     if (this._remote) {
       if (config.moveType === RANDOM_MOVE) {
-        this.move = new RandomMovementRemote(this);
+        this.move = new RemoteMovement(this);
       } else if (config.moveType === FOLLOW_MOVE) {
-        this.move = new FollowMovementRemote(this);
+        this.move = new RemoteMovement(this);
       } else if (config.moveType === ATTACK_MOVE) {
-        this.move = new AttackMovementRemote(this);
+        this.move = new RemoteMovement(this);
       }
     } else {
       if (config.moveType === RANDOM_MOVE) {

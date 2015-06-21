@@ -52,5 +52,5 @@ AttackMovement.prototype.walk = function () {
   }
 };
 AttackMovement.prototype.shoot = function (delay) {
-  _layer.shoot(this.obj, _layer._players, this.obj._power, delay);
+  _layer.shoot(_layer, this.obj, _layer._players, delay);
 };
