@@ -39,6 +39,7 @@ var Multiplayer = cc.Class.extend({
     _socket = this.socket = io("ws://localhost:8000");
     this.socket.on("connect", this.onSocketConnected);
     this.socket.on("disconnect", this.onSocketDisconnect);
+    
     this.socket.on("new player", this.onNewPlayer);
     this.socket.on("move player", this.onMovePlayer);
     this.socket.on("remove player", this.onRemovePlayer);
@@ -57,8 +58,8 @@ var Multiplayer = cc.Class.extend({
     _monsters = this._layer._monsters;
     _projectiles = this._projectiles;
   },
-  onSocketConnected: function(data) {
-    cc.log("Connected to socket server:", data);
+  onSocketConnected: function() {
+    cc.log("Connected to socket server:");
     _socket.emit("new player", {
       x: _player.positionX,
       y: _player.positionY,
@@ -174,7 +175,6 @@ var Multiplayer = cc.Class.extend({
     } else {
       var origin = monsterById(data.origin.id);
       if (origin) {
-        cc.log("_layer._players >>", _layer._players, origin);
         _layer.shoot(_layer, origin, _layer._players, data.origin.attack);
       }
     }
@@ -185,7 +185,6 @@ var Multiplayer = cc.Class.extend({
   		cc.log("Projectile not found: " + data.id, data._shoots);
   		return;
   	}
-  	cc.log("REMOVE PROJECTILE :: ", projectile);
     projectile.setPosition(data.x, data.y);
     projectile.autodestroy();
   },

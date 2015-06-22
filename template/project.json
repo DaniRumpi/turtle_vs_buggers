@@ -1,14 +1,12 @@
 {
-  "debugMode" : 1,
-  "noCache": true,
-  "showFPS" : true,
+  "debugMode" : 0,
+  "noCache": false,
+  "showFPS" : false,
   "frameRate" : 60,
   "id" : "gameCanvas",
   "renderMode" : 0,
   "engineDir":"engine/",
-
   "modules" : ["cocos2d", "chipmunk"],
-
   "jsList" : [
     "src/resource.js",
     "src/_defineFunctions.js",
