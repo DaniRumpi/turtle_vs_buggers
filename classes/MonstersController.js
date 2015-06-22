@@ -1,7 +1,7 @@
 
-var Monster = require("./Monster").Monster;
-var RandomMovement = require("./RandomMovement").RandomMovement;
-var FollowMovement = require("./FollowMovement").FollowMovement;
+var Monster = require("./models/Monster").Monster;
+var RandomMovement = require("./movements/RandomMovement").RandomMovement;
+var FollowMovement = require("./movements/FollowMovement").FollowMovement;
 
 var MonstersController = function (GAME, monsters, players) {
   this.randomMove = new RandomMovement(GAME);

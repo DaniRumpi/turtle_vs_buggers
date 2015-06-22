@@ -37,8 +37,8 @@ function handler (req, res) {
 
 
 var GAME = require('./_config.js').GAME;
-var Player = require("./server/Player").Player;
-var MonstersController = require("./server/MonstersController").MonstersController;
+var Player = require("./classes/models/Player").Player;
+var MonstersController = require("./classes/MonstersController").MonstersController;
 
 
 /**************************************************
