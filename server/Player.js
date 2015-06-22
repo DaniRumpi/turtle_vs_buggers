@@ -2,6 +2,7 @@ var Player = function(data) {
   this.x = data.x || GAME.SIZE.width / 2;
   this.y = data.y || GAME.SIZE.height / 2;
   this.r = data.r;
+  this.score = 0;
   
   this.getX = function() {
     return this.x;

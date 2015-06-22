@@ -36,8 +36,8 @@ function handler (req, res) {
 }
 
 
+var GAME = require('./_config.js').GAME;
 var Player = require("./server/Player").Player;
-// var Monster = require("./server/Monster").Monster;
 var MonstersController = require("./server/MonstersController").MonstersController;
 
 
@@ -165,7 +165,7 @@ function onRemoveMonster(data) {
     console.log("Monster not found: " + data.id);
     return;
   }
-  
+  updatePlayerScore(this.id, GAME.DESTROY);
   monsters.splice(monsters.indexOf(removedMonster), 1);
   this.broadcast.emit("remove monster", data);
 }
@@ -176,11 +176,9 @@ function onHurtMonster(data) {
     console.log("Monster not found: " + data.id);
     return;
   }
+  updatePlayerScore(this.id, GAME.HURT);
   hurtMonster.health--;
   this.broadcast.emit("hurt monster", data);
-}
-function removeProjectile(projectile) {
-  projectiles.splice(projectiles.indexOf(projectile), 1);
 }
 function onNewProjectile(projectile) {
   projectiles.push(projectile);
@@ -196,7 +194,7 @@ function onRemoveProjectile(projectile) {
 /**************************************************
 ** MAIN LOOP
 **************************************************/
-var monstersController = new MonstersController(monsters, players);
+var monstersController = new MonstersController(GAME, monsters, players);
 var interval = setInterval(function() {
   if (clients <= 0) return;
   var newMonsters = monstersController.getRandomMonsters();
@@ -240,7 +238,6 @@ var interval = setInterval(function() {
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
-// Find player by ID
 function playerById(id) {
 	var i = players.length - 1;
 	for (i; i >= 0; i--) {
@@ -256,6 +253,17 @@ function monsterById(id) {
 			return monsters[i];
 	}
 	return false;
+}
+function removeProjectile(projectile) {
+  projectiles.splice(projectiles.indexOf(projectile), 1);
+}
+function updatePlayerScore(id, coef) {
+  var player = playerById(id);
+  if (!player) {
+    console.log("Player not found: " + this.id);
+    return;
+  }
+  player.score += coef;
 }
 
 // init

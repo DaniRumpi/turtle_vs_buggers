@@ -70,18 +70,14 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       this.move.walk();
     }
   },
-  hurt: function(power) {
+  hurt: function(projectile) {
     --this._health;
     if (!this._health) {
-      if (_layer.multiplayer) {
-        _layer.multiplayer.emitRemoveMonster({id: this.id});
-      }
+      this.emitRemoveMonster(projectile);
       this.destroy();
       return true;
     }
-    if (_layer.multiplayer) {
-      _layer.multiplayer.emitHurtMonster({id: this.id});
-    }
+    this.emitHurtMonster(projectile);
     return false;
   },
   destroy: function() {
@@ -129,6 +125,19 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       } else if (config.moveType === ATTACK_MOVE) {
         this.move = new AttackMovement(this);
       }
+    }
+  },
+  // *************//
+  // EMIT MESSAGES//
+  // *************//
+  emitRemoveMonster: function() {
+    if (_layer.multiplayer) {
+      _layer.multiplayer.emitRemoveMonster({id: this.id});
+    }
+  },
+  emitHurtMonster: function() {
+    if (_layer.multiplayer) {
+      _layer.multiplayer.emitHurtMonster({id: this.id});
     }
   }
 });

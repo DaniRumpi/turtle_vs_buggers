@@ -23,7 +23,7 @@ PLAYER_LEVEL2 = {
 PLAYER_LEVEL3 = {
   speed: 3,
   power: 1,
-  health: 100,
+  health: 150,
   scale: 0.4,
   sprite: TURTLE_FRAMES,
   colorExplosion: "default",

@@ -50,7 +50,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     if (this._remote) {
       this.runAction(this.runningAction);
     } else {
-      this.schedule(this.emitUpdatePosition, 1);
+      if (_layer.multiplayer) this.schedule(this.emitUpdatePosition, 1);
       this.scheduleUpdate();
       this.addHealthLevel();
     }
@@ -82,8 +82,8 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     }
     this.move();
   },
-  hurt: function(power) {
-    this._health -= power || 1;
+  hurt: function(projectile) {
+    this._health -= projectile._power || 1;
     this.updateHealthLabel();
   },
   collision: function(something, something2) {
@@ -112,7 +112,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       levelBar = (this._label.split("").slice(0, levelHealth)).join("");
     }
     this.label.setString(levelBar);
-    _layer.emitUpdatePlayerHealth(this.health);
+    this.emitUpdatePlayerHealth();
   },
   handleKey: function(e, val) {
     if (e === cc.KEY.left) {
@@ -168,6 +168,16 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       this.emitUpdatePosition();
     }
   },
+  setRandomRotation: function(config) {
+    if (config.r) {
+      this.rotation = config.r;
+    } else {
+      this.rotation = parseInt(cc.random0To1() * 360);
+    }
+  },
+  // *************//
+  // EMIT MESSAGES//
+  // *************//
   emitUpdatePosition: function () {
     _layer.multiplayer.emitMovePlayer({
       x: this.position.x,
@@ -175,11 +185,9 @@ var PlayerSprite = cc.PhysicsSprite.extend({
       r: this.rotation
     });
   },
-  setRandomRotation: function(config) {
-    if (config.r) {
-      this.rotation = config.r;
-    } else {
-      this.rotation = parseInt(cc.random0To1() * 360);
+  emitUpdatePlayerHealth: function() {
+    if (_layer.multiplayer) {
+      _layer.multiplayer.emitUpdatePlayerHealth(this.health);
     }
   }
 });

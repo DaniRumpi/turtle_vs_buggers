@@ -29,10 +29,6 @@ var GameLayer = cc.Layer.extend({
   initPhysics: function() {
     this.space = new cp.Space();
     this.space.gravity = cp.v(0, 0);
-    //Add the Debug Layer:
-    // var debugNode = new cc.PhysicsDebugNode(this.space);
-    // debugNode.visible = true;
-    // this.addChild(debugNode);
 
     addWallsAndGround(this.space);
   },
@@ -45,13 +41,11 @@ var GameLayer = cc.Layer.extend({
       for (j = projectile.targets.length - 1; j >= 0; j--) {
         target = projectile.targets[j];
         if (target.visible && cc.pDistance(projectile._position, target._position) <= target._ratio) {
-          if (_layer.multiplayer) {
-            _layer.multiplayer.emitRemoveProjectile(projectile);
-          }
           this._projectiles.splice(i, 1);
-          if (target.hurt(projectile._power)) {
-            projectile.origin._targetsDestroyed++;
+          if (target.hurt(projectile)) { // target hurt
+            projectile.origin._targetsDestroyed++; // target dead
           }
+          _layer.emitRemoveProjectile(projectile);
           projectile.autodestroy();
           break;
         }
@@ -68,10 +62,7 @@ var GameLayer = cc.Layer.extend({
   },
   onKeyReleased: function(e) {
     if (e === cc.KEY.space) {
-      if (_layer.multiplayer) {
-        _layer._player._shoots++;
-        _layer.multiplayer.emitNewProjectile(true, _layer._player);
-      }
+      _layer.emitNewPlayerProjectile();
       _layer.shoot(_layer, _layer._player, _layer._monsters);
     } else {
       _player.handleKey(e);
@@ -140,6 +131,20 @@ var GameLayer = cc.Layer.extend({
     } else {
       message = this.levelManager.toString();
       cc.director.pushScene(new cc.TransitionFade(2, Message.newScene(message)));
+    }
+  },
+  // *************//
+  // EMIT MESSAGES//
+  // *************//
+  emitRemoveProjectile: function(projectile) {
+    if (this.multiplayer) {
+      this.multiplayer.emitRemoveProjectile(projectile);
+    }
+  },
+  emitNewPlayerProjectile: function() {
+    if (this.multiplayer) {
+      this._player._shoots++;
+      this.multiplayer.emitNewProjectile(true, this._player); // remote, origin
     }
   }
 });

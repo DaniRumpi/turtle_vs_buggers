@@ -192,18 +192,21 @@ var Multiplayer = cc.Class.extend({
   // ******************************
   // Emitter
   // ******************************
+  // PLAYER
   emitMovePlayer: function(data) {
     _socket.emit("move player", data);
   },
   emitUpdatePlayerHealth: function(health) {
     _socket.emit("update player health", {health: health});
   },
+  // MONSTER
   emitRemoveMonster: function(data) {
     _socket.emit("remove monster", data);
   },
   emitHurtMonster: function(data) {
     _socket.emit("hurt monster", data);
   },
+  // PROJECTILE
   emitNewProjectile: function(remote, origin, targets) {
     _socket.emit("new projectile", {
       origin: {
