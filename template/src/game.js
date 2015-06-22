@@ -4,7 +4,7 @@ function addCollisionCallbacks(space, collision, separate) {
 }
 
 var GameLayer = cc.Layer.extend({
-  init:function (multiplayer) {
+  init: function (multiplayer) {
     this._super(); // 1. super init first
     this.space = null;
     this._player = null;
@@ -102,6 +102,7 @@ var GameLayer = cc.Layer.extend({
     this.addChild(menu, 4);
   },
   onQuit: function() {
+    _layer.emitDisconnectPlayer();
     cc.director.runScene(new SysMenu());
   },
   keyboardSetup: function(onKeyPressed, onKeyReleased) {
@@ -145,6 +146,11 @@ var GameLayer = cc.Layer.extend({
     if (this.multiplayer) {
       this._player._shoots++;
       this.multiplayer.emitNewProjectile(true, this._player); // remote, origin
+    }
+  },
+  emitDisconnectPlayer: function() {
+    if (this.multiplayer) {
+      this.multiplayer.emitDisconnectPlayer();
     }
   }
 });

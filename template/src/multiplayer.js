@@ -4,24 +4,24 @@
 var _players = [], _monsters, _projectiles, _socket;
 // Find player by ID
 function playerById(id) {
-	var i;
-	for (i = 0; i < _players.length; i++) {
+	var i = _players.length - 1;
+	for (i; i >= 0; i--) {
 		if (_players[i].id === id)
 			return _players[i];
 	}
 	return false;
 }
 function monsterById(id) {
-	var i;
-	for (i = 0; i < _monsters.length; i++) {
+	var i = _monsters.length - 1;
+	for (i; i >= 0; i--) {
 		if (_monsters[i].id === id)
 			return _monsters[i];
 	}
 	return false;
 }
 function projectileFind(data) {
-	var i;
-	for (i = 0; i < _projectiles.length; i++) {
+	var i = _projectiles.length - 1;
+	for (i; i >= 0; i--) {
 		if (_projectiles[i].id === data.id && _projectiles[i]._shoots === data._shoots)
 			return _projectiles[i];
 	}
@@ -197,6 +197,9 @@ var Multiplayer = cc.Class.extend({
   },
   emitUpdatePlayerHealth: function(health) {
     _socket.emit("update player health", {health: health});
+  },
+  emitDisconnectPlayer: function() {
+    _socket.disconnect();
   },
   // MONSTER
   emitRemoveMonster: function(data) {
