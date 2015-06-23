@@ -127,6 +127,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       }
     }
   },
+  updateScoreLabel: function(){},
   // *************//
   // EMIT MESSAGES//
   // *************//
