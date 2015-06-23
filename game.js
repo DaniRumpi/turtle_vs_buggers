@@ -77,19 +77,22 @@ function onClientDisconnect() {
 		console.log("Player not found: " + this.id);
 		return;
 	}
-	clients--;
+	clients -= 1;
 	// Remove player from players array
 	players.splice(players.indexOf(removePlayer), 1);
-	if (clients === 0) {
-	  monsters.splice(0);
-	  players.splice(0);
-	}
 	// Broadcast removed player to connected socket clients
-	this.broadcast.emit("remove player", {id: this.id});
+  this.broadcast.emit("remove player", {id: this.id});
+  cleanUp();
 }
 
 function onNewPlayer(data) {
-  var newPlayer = new Player(data);
+  var newPlayer = playerById(this.id);
+  if (newPlayer) {
+    players.splice(players.indexOf(newPlayer), 1);
+    clients -= 1;
+  }
+  
+  newPlayer = new Player(data);
   newPlayer.id = this.id;
   this.broadcast.emit("new player", {
     id: newPlayer.id,
@@ -127,7 +130,7 @@ function onNewPlayer(data) {
 	
 	// Add new player to the players array
 	players.push(newPlayer);
-	clients++;
+	clients += 1;
 }
 
 function onMovePlayer(data) {
@@ -264,6 +267,13 @@ function updatePlayerScore(id, coef) {
     return;
   }
   player.score += coef;
+}
+function cleanUp() {
+  if (clients === 0) {
+	  monsters.splice(0);
+	  players.splice(0);
+	  projectiles.splice(0);
+	}
 }
 
 // init

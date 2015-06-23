@@ -50,9 +50,10 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     if (this._remote) {
       this.runAction(this.runningAction);
     } else {
-      if (_layer.multiplayer) this.schedule(this.emitUpdatePosition, 1);
+      if (_layer.multiplayer) _layer.schedule(this.emitUpdatePosition, 1);
       this.scheduleUpdate();
       this.addHealthLevel();
+      this.addScoreLabel();
     }
     _layer.addChild(this, 0);
   },
@@ -174,6 +175,14 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     } else {
       this.rotation = parseInt(cc.random0To1() * 360);
     }
+  },
+  addScoreLabel: function() {
+    _layer.scoreLabel.setup(this);
+    _layer.scoreLabel.addScoreLabel();
+    _layer.scoreLabel.updateScoreLabel();
+  },
+  updateScoreLabel: function() {
+    _layer.scoreLabel.updateScoreLabel();
   },
   // *************//
   // EMIT MESSAGES//

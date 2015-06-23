@@ -82,7 +82,7 @@ LEVEL1 = {
   }
 };
 LEVEL2 = {
-  LIMIT_MONSTERS: 6,
+  LIMIT_MONSTERS: 4 + 6,
   MONSTERS: [
     {
       moveType: RANDOM_MOVE,
@@ -152,7 +152,7 @@ LEVEL2 = {
   }
 };
 LEVEL3 = {
-  LIMIT_MONSTERS: 8,
+  LIMIT_MONSTERS: 4 + 6 + 8,
   MONSTERS: [
     {
       moveType: RANDOM_MOVE,
@@ -280,7 +280,7 @@ BUGGER3 = {
 MONSTERS = [BUGGER3, BUGGER2, BUGGER1];
 
 LEVEL_MULTIPLAYER = {
-  LIMIT_MONSTERS: 9999,
+  LIMIT_MONSTERS: 1,
   MONSTERS: [],
   PLAYERS: [PLAYER],
   BG: {

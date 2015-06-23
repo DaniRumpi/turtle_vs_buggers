@@ -47,7 +47,7 @@ GAME = {
   FOLLOW_MOVE: FOLLOW_MOVE,
   ATTACK_MOVE: ATTACK_MOVE,
   SIZE: {width: 800, height: 480},
-  MIDDLE: {width: 90, height: 70},
+  MIDDLE: {width: 120, height: 100},
   MONSTER_SIZE: {width: 100, height: 100}
 };
 

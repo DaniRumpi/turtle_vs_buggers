@@ -1,6 +1,6 @@
 {
-  "debugMode" : 0,
-  "noCache": false,
+  "debugMode" : 1,
+  "noCache": true,
   "showFPS" : false,
   "frameRate" : 60,
   "id" : "gameCanvas",
@@ -23,6 +23,7 @@
     "src/sysMenu.js",
     "src/gameOver.js",
     "src/message.js",
+    "src/scoreLabel.js",
     "src/levelManager.js",
     "src/multiplayer.js",
     "src/game.js"

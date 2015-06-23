@@ -1,9 +1,7 @@
 var GameOver = cc.LayerColor.extend({
-  _won:false,
-  onEnter:function () {
+  _won: false,
+  onEnter: function() {
     this._super();
-    var centerPos = cc.p( _size.width/2, _size.height/2 );
-  
     var message;
     if (this._won) {
       message = "You Win!";
@@ -22,7 +20,6 @@ var GameOver = cc.LayerColor.extend({
         cc.director.runScene(new cc.TransitionFade(2, new SysMenu()));
       }, this)
     ));
-
   }
 });
  

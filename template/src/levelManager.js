@@ -34,6 +34,7 @@ var LevelManager = cc.Class.extend({
   },
   setup: function(layer) {
     this._layer = layer;
+    this.setLevel();
     // Load Background
     BackgroundSky.create(this.level.BG.sprite, this.level.BG.color);
     // Load Player
@@ -72,7 +73,9 @@ var LevelManager = cc.Class.extend({
 var _levelManager;
 LevelManager.getInstance = function (layer, multiplayer) {
   if (!_levelManager) {
+    layer.scoreLabel.reset();
     _levelManager = new LevelManager(layer, multiplayer);
   }
+  _levelManager.multiplayer = multiplayer;
   return _levelManager;
-}
+};

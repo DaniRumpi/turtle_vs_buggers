@@ -29,15 +29,13 @@ function projectileFind(data) {
 }
 
 var Multiplayer = cc.Class.extend({
-  _level: null,
-  _layer: null,
-  level: null,
-  players: [],
-  _projectiles: [],
   ctor: function (gameLayer) {
     this._layer = gameLayer;
     _socket = this.socket = io("ws://localhost:8000");
     this.socket.on("connect", this.onSocketConnected);
+    if (!this.socket.connected) {
+      this.socket.connect();
+    }
     this.socket.on("disconnect", this.onSocketDisconnect);
     
     this.socket.on("new player", this.onNewPlayer);
@@ -54,9 +52,9 @@ var Multiplayer = cc.Class.extend({
     this.socket.on("new projectile", this.onNewProjectile);
     this.socket.on("remove projectile", this.onRemoveProjectile);
     
-    _players = this.players;
-    _monsters = this._layer._monsters;
-    _projectiles = this._projectiles;
+    _players = this.players = [];
+    _monsters = this._layer._monsters = [];
+    _projectiles = this._projectiles = [];
   },
   onSocketConnected: function() {
     cc.log("Connected to socket server:");
@@ -70,8 +68,10 @@ var Multiplayer = cc.Class.extend({
     cc.log("Disconnected from socket server");
     _players.splice(0);
     _monsters.splice(0);
+    _projectiles.splice(0);
   },
   onNewPlayer: function(data) {
+    if (data.id === _socket.id) return;
     cc.log("New player connected: " + data.id);
     // Initialise the new player
   	var newPlayer = new PlayerSprite(PLAYER, {
@@ -107,7 +107,10 @@ var Multiplayer = cc.Class.extend({
   	removePlayer.removeFromParent();
   },
   onNewMonster: function(data) {
-  	var newMonster = new MonsterSprite(getMonsterByMove(data.moveType), {
+    console.log("onNewMonster::data_id", this.id);
+    // var newMonster = monsterById(data.id);
+    // if (newMonster) return;
+  	newMonster = new MonsterSprite(getMonsterByMove(data.moveType), {
   	  x: data.x,
   	  y: data.y,
   	  aimX: data.aimX,
@@ -121,9 +124,12 @@ var Multiplayer = cc.Class.extend({
   	_monsters.push(newMonster);
   },
   onNewMonsters: function(data) {
+    console.log("onNewMonsterS::data_id", this.id);
     var newMonster;
     var i = data.monsters.length - 1;
     for (i; i >= 0; i--) {
+      // newMonster = monsterById(data.monsters[i].id);
+      // if (newMonster) continue;
     	newMonster = new MonsterSprite(getMonsterByMove(data.monsters[i].moveType), {
     	  x: data.monsters[i].x,
     	  y: data.monsters[i].y,
@@ -200,6 +206,7 @@ var Multiplayer = cc.Class.extend({
   },
   emitDisconnectPlayer: function() {
     _socket.disconnect();
+    _socket.off();
   },
   // MONSTER
   emitRemoveMonster: function(data) {

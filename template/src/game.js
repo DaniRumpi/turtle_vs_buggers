@@ -13,6 +13,7 @@ var GameLayer = cc.Layer.extend({
     this._projectiles = [];
     this.initPhysics();
     setupAnimations(this);
+    this.scoreLabel = ScoreLabel.getInstance(this, multiplayer);
     this.levelManager = LevelManager.getInstance(this, multiplayer);
     this.levelManager.setup(this);
     
@@ -45,8 +46,10 @@ var GameLayer = cc.Layer.extend({
           if (target.hurt(projectile)) { // target hurt
             projectile.origin._targetsDestroyed++; // target dead
           }
+          projectile.origin._shoots++;
           _layer.emitRemoveProjectile(projectile);
           projectile.autodestroy();
+          projectile.origin.updateScoreLabel();
           break;
         }
       }
@@ -102,7 +105,9 @@ var GameLayer = cc.Layer.extend({
     this.addChild(menu, 4);
   },
   onQuit: function() {
-    _layer.emitDisconnectPlayer();
+    _layer.levelManager.reset();
+    _layer.scoreLabel.reset();
+    _layer._cleanUp();
     cc.director.runScene(new SysMenu());
   },
   keyboardSetup: function(onKeyPressed, onKeyReleased) {
@@ -114,19 +119,36 @@ var GameLayer = cc.Layer.extend({
       }, this);
     }
   },
-  gameOver: function(won) {
+  _cleanUp: function() {
+    _layer.emitDisconnectPlayer();
     this.unscheduleAllCallbacks();
     this._player.unscheduleAllCallbacks();
     for (i = this._monsters.length - 1; i >= 0; i--) {
       this._monsters[i].unscheduleAllCallbacks();
     }
-    this.update = function(){};
-
+    try {
+      this.player.removeFromParent();
+    } catch(e) {}
+    for (i = this._monsters.length - 1; i >= 0; i--) {
+      try {
+        this._monsters[i].removeFromParent();
+      } catch(e) {}
+    }
+  },
+  gameOver: function(won) {
+    this._cleanUp();
     var message, nextLevel;
     if (won) {
       nextLevel = this.levelManager.nextLevel();
+      if (nextLevel) {
+        this.scoreLabel.backup(); // backup for more levels
+      } else {
+        this.scoreLabel.addHighscore(); // No more levels, save highscore
+        this.scoreLabel.reset();
+      }
     }
     if (!won || !nextLevel) {
+      this.scoreLabel.reset();
       this.levelManager.reset();
       cc.director.runScene(new cc.TransitionFade(2, GameOver.newScene(won)));
     } else {
