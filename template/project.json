@@ -25,6 +25,7 @@
     "src/message.js",
     "src/scoreLabel.js",
     "src/levelManager.js",
+    "src/highscoreLayer.js",
     "src/multiplayer.js",
     "src/game.js"
   ]

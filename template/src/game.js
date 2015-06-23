@@ -138,12 +138,12 @@ var GameLayer = cc.Layer.extend({
   gameOver: function(won) {
     this._cleanUp();
     var message, nextLevel;
+    this.scoreLabel.addHighscore(); // No more levels, save highscore
     if (won) {
       nextLevel = this.levelManager.nextLevel();
       if (nextLevel) {
         this.scoreLabel.backup(); // backup for more levels
       } else {
-        this.scoreLabel.addHighscore(); // No more levels, save highscore
         this.scoreLabel.reset();
       }
     }

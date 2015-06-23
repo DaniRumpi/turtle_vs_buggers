@@ -12,6 +12,10 @@ var ScoreLabel = cc.Class.extend({
     this.setShoots(this._player._shoots);
     this.setTargetsDestroyed(this._player._targetsDestroyed);
   },
+  sortAndSplice: function(array) {
+    array.sort(function(a, b) { return b - a; });
+    array.splice(5, array.length);
+  },
   addHighscore: function() {
     var highscores, hs = cc.sys.localStorage.getItem("highscores");
     try {
@@ -23,15 +27,9 @@ var ScoreLabel = cc.Class.extend({
       highscores = [];
     }
     highscores.push(this.getScore());
+    this.sortAndSplice(highscores);
     hs = JSON.stringify(highscores);
     cc.sys.localStorage.setItem("highscores", hs);
-  },
-  getHighscores: function() { // might return null
-    try {
-      return JSON.parse(cc.sys.localStorage.getItem("highscores"));
-    } catch(e) {
-      return null;
-    }
   },
   reset: function() {
     this.setHealth(0);

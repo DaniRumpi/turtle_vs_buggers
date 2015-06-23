@@ -30,6 +30,9 @@ var SysMenu = cc.Layer.extend({
   onMultiplayer: function () {
     cc.director.runScene(new cc.TransitionFade(1, new Game(true)));
   },
+  onHighscores: function () {
+    cc.director.runScene(new cc.TransitionFade(1, new Highscore()));
+  },
   onSettings: function () {
     // this.onButtonEffect();
     // var scene = new cc.Scene();
