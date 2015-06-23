@@ -24,12 +24,12 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -16, this.$height);
+    this.$shape.setCollisionType(2);
     _layer.space.addBody(this.$body);
     _layer.space.addShape(this.$shape);
     this.setBody(this.$body);
 
     this._color = this.color;
-    this.setPosition(this.position);
     this._ratio = this.$width / 2.3;
     // Create Movement
     if (config.moveType) {
@@ -40,16 +40,14 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     if (_default.showTime) {
       var monster = this;
       _layer.scheduleOnce(function() {
-        monster.setRandomPosition(config);
-        monster.$shape.setCollisionType(2);
         _layer.addChild(monster, 1);
+        monster.setRandomPosition(config);
         !config.remote && monster.update();
         _layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
       }, _default.showTime);
     } else {
-      this.setRandomPosition(config);
-      this.$shape.setCollisionType(2);
       _layer.addChild(this, 1);
+      this.setRandomPosition(config);
       !config.remote && this.update();
       _layer.addExplosion(EXPLOSION_YELLOW, this.position, 0, this._colorExplosion);
     }
@@ -95,11 +93,11 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     } catch(e) {}
   },
   setOutPosition: function() {
-    this.setPosition(-100, -100);
+    this.position = cc.p(-100, -100); // Fix late schedule addChild of monsters
   },
   setRandomPosition: function(config) {
     if (config.x !== undefined) {
-      this.position = cc.p(config.x, config.y);
+      this.setPosition(config.x, config.y);
       return;
     }
     var _posX, _posY, _pos, _middle;
@@ -112,7 +110,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
         break;
       }
     }
-    this.position = _pos;
+    this.setPosition(_pos);
   },
   configMovement: function(config) {
     if (this._remote) {
