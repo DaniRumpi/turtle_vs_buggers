@@ -18,13 +18,12 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     } else {
       this._health = config.health;
     }
+    this.setOutPosition();
     this.$width = this.width * this.scale;
     this.$height = this.height * this.scale;
-    this.setRandomPosition(config);
     this.$body = new cp.Body(1, cp.momentForBox(1, this.$width, this.$height));
     this.$body.p = this.position;
     this.$shape = new cp.BoxShape(this.$body, this.$width -16, this.$height);
-    this.$shape.setCollisionType(2);
     _layer.space.addBody(this.$body);
     _layer.space.addShape(this.$shape);
     this.setBody(this.$body);
@@ -41,11 +40,15 @@ var MonsterSprite = cc.PhysicsSprite.extend({
     if (_default.showTime) {
       var monster = this;
       _layer.scheduleOnce(function() {
+        monster.setRandomPosition(config);
+        monster.$shape.setCollisionType(2);
         _layer.addChild(monster, 1);
         !config.remote && monster.update();
         _layer.addExplosion(EXPLOSION_YELLOW, monster.position, 0, monster._colorExplosion);
       }, _default.showTime);
     } else {
+      this.setRandomPosition(config);
+      this.$shape.setCollisionType(2);
       _layer.addChild(this, 1);
       !config.remote && this.update();
       _layer.addExplosion(EXPLOSION_YELLOW, this.position, 0, this._colorExplosion);
@@ -95,6 +98,9 @@ var MonsterSprite = cc.PhysicsSprite.extend({
       this.removeFromParent();
     } catch(e) {}
   },
+  setOutPosition: function() {
+    this.setPosition(-100, -100);
+  },
   setRandomPosition: function(config) {
     if (config.x !== undefined) {
       this.position = cc.p(config.x, config.y);
@@ -114,13 +120,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
   },
   configMovement: function(config) {
     if (this._remote) {
-      if (config.moveType === RANDOM_MOVE) {
-        this.move = new RemoteMovement(this);
-      } else if (config.moveType === FOLLOW_MOVE) {
-        this.move = new RemoteMovement(this);
-      } else if (config.moveType === ATTACK_MOVE) {
-        this.move = new RemoteMovement(this);
-      }
+      this.move = new RemoteMovement(this);
     } else {
       if (config.moveType === RANDOM_MOVE) {
         this.move = new RandomMovement(this);
