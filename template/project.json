@@ -27,6 +27,7 @@
     "src/levelManager.js",
     "src/highscoreLayer.js",
     "src/multiplayer.js",
-    "src/game.js"
+    "src/game.js",
+    "src/aboutLayer.js"
   ]
 }
