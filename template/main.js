@@ -12,7 +12,7 @@ cc.game.onStart = function(){
     _size = cc.size(800, 480);
     cc.loader.resPath = "res/Normal";
   } else {
-    cc.loader.resPath = "res/HD";
+    cc.loader.resPath = "res/Normal";
   }
   cc.view.setDesignResolutionSize(_size.width, _size.height, cc.ResolutionPolicy.SHOW_ALL);
   cc.view.resizeWithBrowserSize(true);
