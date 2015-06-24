@@ -23,6 +23,9 @@ var ScoreLabel = cc.Class.extend({
     } catch(e) {
       highscores = [];
     }
+    if (!highscores) {
+      highscores = [];
+    }
     if (typeof highscores.push !== "function") { // no array
       highscores = [];
     }

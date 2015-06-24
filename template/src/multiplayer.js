@@ -31,7 +31,7 @@ function projectileFind(data) {
 var Multiplayer = cc.Class.extend({
   ctor: function (gameLayer) {
     this._layer = gameLayer;
-    _socket = this.socket = io("ws://localhost:8000");
+    _socket = this.socket = io("ws://localhost:5000");
     this.socket.on("connect", this.onSocketConnected);
     this.socket.on("id", this.setId);
     if (!this.socket.connected) {
