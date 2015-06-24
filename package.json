@@ -1,0 +1,11 @@
+{
+    "name": "turtle_vs_buggers",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+      "socket.io": "~1"
+  },
+  "engines": {
+    "node": "0.6.x"
+  }
+}
