@@ -67,14 +67,24 @@ var ScoreLabel = cc.Class.extend({
     return this._player._health + this._player._shoots*5 + this._player._targetsDestroyed*10;
   },
   addScoreLabel: function() {
-    this._textScore = "Score: 0";
-    this._labelScore = cc.LabelTTF.create(this._textScore, "Helvetica Neue", 20);
+    this._textScore = "Your score: 0";
+    this._labelScore = cc.LabelTTF.create(this._textScore, "Helvetica", 20);
     this._labelScore.setColor(cc.color(255,255,255));
-    this._labelScore.setPosition(60, _size.height - 20);
+    this._labelScore.setPosition(80, _size.height - 20);
     _layer.addChild(this._labelScore);
+    if (this.multiplayer) {
+      this._textLeaderScore = "Leader score: 0";
+      this._labelLeaderScore = cc.LabelTTF.create(this._textLeaderScore, "Helvetica", 20);
+      this._labelLeaderScore.setColor(cc.color(255,255,255));
+      this._labelLeaderScore.setPosition(_size.width/2, _size.height - 20);
+      _layer.addChild(this._labelLeaderScore);
+    }
   },
   updateScoreLabel: function() {
-    this._labelScore.setString("Score: " + this.getScore());
+    this._labelScore.setString("Your score: " + this.getScore());
+  },
+  updateLeaderScoreLabel: function(score) {
+    this._labelLeaderScore.setString("Leader score: " + score);
   },
 });
 

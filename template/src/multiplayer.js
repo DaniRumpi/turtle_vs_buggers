@@ -1,7 +1,7 @@
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
-var _players = [], _monsters, _projectiles, _socket;
+var _players = [], _monsters, _projectiles, _socket, _id;
 // Find player by ID
 function playerById(id) {
 	var i = _players.length - 1;
@@ -33,6 +33,7 @@ var Multiplayer = cc.Class.extend({
     this._layer = gameLayer;
     _socket = this.socket = io("ws://localhost:8000");
     this.socket.on("connect", this.onSocketConnected);
+    this.socket.on("id", this.setId);
     if (!this.socket.connected) {
       this.socket.connect();
     }
@@ -52,9 +53,16 @@ var Multiplayer = cc.Class.extend({
     this.socket.on("new projectile", this.onNewProjectile);
     this.socket.on("remove projectile", this.onRemoveProjectile);
     
+    this.socket.on("leader", this.onLeaderScore);
+    this.socket.on("scores", this.onScores);
+    this.socket.on("game over", this.onGameOver);
+    
     _players = this.players = [];
     _monsters = this._layer._monsters = [];
     _projectiles = this._projectiles = [];
+  },
+  setId: function(data) {
+    _id = data.id;
   },
   onSocketConnected: function() {
     cc.log("Connected to socket server:");
@@ -71,7 +79,7 @@ var Multiplayer = cc.Class.extend({
     _projectiles.splice(0);
   },
   onNewPlayer: function(data) {
-    if (data.id === _socket.id) return;
+    if (data.id === _id) return;
     cc.log("New player connected: " + data.id);
     // Initialise the new player
   	var newPlayer = new PlayerSprite(PLAYER, {
@@ -176,7 +184,7 @@ var Multiplayer = cc.Class.extend({
   	--hurtMonster._health;
   },
   onNewProjectile: function(data) {
-    if (data.origin.remote) {
+    if (data.origin && data.origin.remote) {
       _layer.shoot(_layer.multiplayer, data.origin);
     } else {
       var origin = monsterById(data.origin.id);
@@ -193,6 +201,32 @@ var Multiplayer = cc.Class.extend({
   	}
     projectile.setPosition(data.x, data.y);
     projectile.autodestroy();
+  },
+  onLeaderScore: function(data) {
+    cc.log("onLeaderScore", data);
+    var score;
+    if (_id === data.leader.id) {
+      score = "You";
+    } else {
+      score = data.leader.score;
+    }
+    _layer.scoreLabel.updateLeaderScoreLabel(score);
+  },
+  onScores: function(data) {
+    cc.log("Scores", data);
+  },
+  onGameOver: function(data) {
+    cc.log("onGameOver", data);
+    _socket.disconnect();
+    _socket.off();
+    var config = {
+      id: _id,
+      bg: cc.color(255,255,255),
+      color: cc.color(0,0,0),
+      title: "=== Top Highscore ===",
+      highscores: data.scores
+    };
+    cc.director.runScene(new cc.TransitionFade(1, Highscore.scene(config)));
   },
   // ******************************
   // Emitter
@@ -219,7 +253,7 @@ var Multiplayer = cc.Class.extend({
   emitNewProjectile: function(remote, origin, targets) {
     _socket.emit("new projectile", {
       origin: {
-        id: _socket.id,
+        id: _id,
         x: origin.position.x,
         y: origin.position.y,
         rotation: origin.rotation,
@@ -233,7 +267,7 @@ var Multiplayer = cc.Class.extend({
   },
   emitRemoveProjectile: function(projectile) {
     _socket.emit("remove projectile", {
-      id: _socket.id,
+      id: _id,
       x: projectile._position.x,
       y: projectile._position.y,
       _shoots: projectile.origin._shoots

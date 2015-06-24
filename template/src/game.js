@@ -166,7 +166,6 @@ var GameLayer = cc.Layer.extend({
   },
   emitNewPlayerProjectile: function() {
     if (this.multiplayer) {
-      this._player._shoots++;
       this.multiplayer.emitNewProjectile(true, this._player); // remote, origin
     }
   },

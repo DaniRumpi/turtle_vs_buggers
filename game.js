@@ -47,6 +47,8 @@ var MonstersController = require("./classes/MonstersController").MonstersControl
 var socket,
 	players = [],
 	monsters = [],
+	countMonsters = 0,
+	monstersDestroyed = 0,
 	projectiles = [],
 	clients = 0,
 	projectiles_id = 0;
@@ -67,6 +69,7 @@ function onSocketConnection(client) {
 	client.on("hurt monster", onHurtMonster);
 	client.on("new projectile", onNewProjectile);
 	client.on("remove projectile", onRemoveProjectile);
+	client.emit("id", {id: client.id});
 }
 
 function onClientDisconnect() {
@@ -159,7 +162,7 @@ function onUpdatePlayerHealth(data) {
     console.log("Player not found: " + this.id);
     return;
   }
-  player.health = data.health;
+  player.health = parseInt(data.health);
 }
 
 function onRemoveMonster(data) {
@@ -171,6 +174,10 @@ function onRemoveMonster(data) {
   updatePlayerScore(this.id, GAME.DESTROY);
   monsters.splice(monsters.indexOf(removedMonster), 1);
   this.broadcast.emit("remove monster", data);
+  monstersDestroyed++;
+  if (allMonstersDestroyed()) {
+    broadcastGameOver();
+  }
 }
 
 function onHurtMonster(data) {
@@ -200,7 +207,8 @@ function onRemoveProjectile(projectile) {
 var monstersController = new MonstersController(GAME, monsters, players);
 var interval = setInterval(function() {
   if (clients <= 0) return;
-  var newMonsters = monstersController.getRandomMonsters();
+  var newMonsters = monstersController.getRandomMonsters(countMonsters);
+  countMonsters += newMonsters.length;
   var newMonster, i;
   for (i = newMonsters.length - 1; i >= 0; i--) {
 		newMonster = newMonsters[i];
@@ -238,6 +246,20 @@ var interval = setInterval(function() {
 	}
 }, 250);
 
+
+// *********************************************************
+// Broadcast leader score
+// *********************************************************
+var scores, leader, index;
+var interval = setInterval(function() {
+  if (players.length) {
+    leader = getScores().splice(0, 1)[0];
+    if (leader) {
+      io.sockets.emit("leader", {leader: leader});
+    }
+  }
+}, 1600);
+
 /**************************************************
 ** GAME HELPER FUNCTIONS
 **************************************************/
@@ -257,6 +279,9 @@ function monsterById(id) {
 	}
 	return false;
 }
+function allMonstersDestroyed() {
+  return GAME.LIMIT_MONSTERS <= monstersDestroyed;
+}
 function removeProjectile(projectile) {
   projectiles.splice(projectiles.indexOf(projectile), 1);
 }
@@ -273,7 +298,28 @@ function cleanUp() {
 	  monsters.splice(0);
 	  players.splice(0);
 	  projectiles.splice(0);
+	  countMonsters = 0;
+	  monstersDestroyed = 0;
+	  projectiles_id = 0;
 	}
+}
+
+function getScores() {
+  scores = [];
+  index = players.length - 1;
+  for (index; index >= 0; index--) {
+    scores.push(players[index].getScoreData());
+  }
+  scores.sort(function(a, b) {return b.score - a.score});
+  return scores;
+}
+
+function broadcastGameOver() {
+	io.sockets.emit("game over", {scores: getScores()});
+	setTimeout(function() {
+    monstersDestroyed = 0;
+    countMonsters = 0;
+	}, 2000);
 }
 
 // init

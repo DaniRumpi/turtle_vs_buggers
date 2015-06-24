@@ -1,18 +1,33 @@
 var Highscore = cc.Layer.extend({
-  ctor: function () {
+  ctor: function (data) {
+    this.data = data || {};
     this._super();
     this.init();
   },
   init: function () {
     this._super();
-    var title = new cc.MenuItemFont("== Highscores ==");
+    
+    if (this.data.bg) {
+      var bg = new cc.LayerColor(this.data.bg);
+      this.addChild(bg);
+    }
+    
+    var title = new cc.MenuItemFont(this.data.title || "== Highscores ==");
     this.menu = new cc.Menu(title);
+    if (this.data.color) {
+      this.menu.setColor(this.data.color);
+    }
     
-    this.setListHighscores();
+    if (this.data.highscores) {
+      this.setListHighscoresMultiplayer();
+    } else {
+      this.setListHighscores();
+    }
     
-    this.menu.alignItemsVerticallyWithPadding(50);
+    this.menu.alignItemsVerticallyWithPadding(40);
     this.addChild(this.menu);
     this.addQuitMenuItem();
+    _layer = this;
   },
   getHighscores: function() {
     try {
@@ -33,8 +48,22 @@ var Highscore = cc.Layer.extend({
     var str, i;
     var hs = this.getHighscores();
     this.sortAndSplice(hs);
+    
     for (i = 0; i < hs.length; i++) {
       str = new cc.MenuItemFont((i + 1) + ". " + hs[i]);
+      this.menu.addChild(str);
+    }
+  },
+  setListHighscoresMultiplayer: function() {
+    var str, i, limit;
+    var hs = this.data.highscores;
+    limit = hs.length > 5 ? 5 : hs.length;
+    for (i = 0; i < limit; i++) {
+      if (this.data.id === hs[i].id) {
+        str = new cc.MenuItemFont("You: " + hs[i].score);
+      } else {
+        str = new cc.MenuItemFont("Player " + (i + 1) + ": " + hs[i].score);
+      }
       this.menu.addChild(str);
     }
   },
@@ -51,9 +80,9 @@ var Highscore = cc.Layer.extend({
   }
 });
 
-Highscore.scene = function () {
+Highscore.scene = function (data) {
   var scene = new cc.Scene();
-  var layer = new Highscore();
+  var layer = new Highscore(data);
   scene.addChild(layer);
   _layer = layer;
   return scene;

@@ -9,6 +9,10 @@ var MonstersController = function (GAME, monsters, players) {
   this.randomMove = new RandomMovement(GAME, this.moveHelper);
   this.followMove = new FollowMovement(GAME, players, this.moveHelper);
   this.monsters = monsters;
+  
+  var _min = GAME.MIN_MONSTERS;
+  var _max = GAME.MAX_MONSTERS - GAME.MIN_MONSTERS;
+  
   var id = 0;
 
   var find = function (id) {
@@ -54,12 +58,13 @@ var MonstersController = function (GAME, monsters, players) {
     var monster = Monster.find(data.id);
     monster.update(data);
   };
-  this.getRandomMonsters = function() {
+  this.getRandomMonsters = function(countMonsters) {
     var monsters = [];
     if (this.monsters.length < 3) {
-      var min = GAME.MIN_MONSTERS;
-      var max = GAME.MAX_MONSTERS - GAME.MIN_MONSTERS;
-      var n = parseInt(Math.random() * max) + min;
+      var n = parseInt(Math.random() * _max) + _min;
+      if (n + countMonsters > GAME.LIMIT_MONSTERS) {
+        n = GAME.LIMIT_MONSTERS - countMonsters;
+      }
       var i;
       for (i = n - 1; i >= 0; i--) {
         monsters.push(this.new());

@@ -177,6 +177,9 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     }
   },
   addScoreLabel: function() {
+    if (_layer.multiplayer) {
+      _layer.scoreLabel.reset();
+    }
     _layer.scoreLabel.setup(this);
     _layer.scoreLabel.addScoreLabel();
     _layer.scoreLabel.updateScoreLabel();
@@ -196,7 +199,7 @@ var PlayerSprite = cc.PhysicsSprite.extend({
   },
   emitUpdatePlayerHealth: function() {
     if (_layer.multiplayer) {
-      _layer.multiplayer.emitUpdatePlayerHealth(this.health);
+      _layer.multiplayer.emitUpdatePlayerHealth(this._health);
     }
   }
 });

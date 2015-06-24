@@ -2,6 +2,7 @@ var Player = function(data) {
   this.x = data.x || GAME.SIZE.width / 2;
   this.y = data.y || GAME.SIZE.height / 2;
   this.r = data.r;
+  this.health = 150;
   this.score = 0;
   
   this.getX = function() {
@@ -24,6 +25,9 @@ var Player = function(data) {
   };
   this.setR = function(newR) {
     this.r = newR;
+  };
+  this.getScoreData = function() {
+    return {id: this.id, score: this.health + this.score};
   };
 };
 
