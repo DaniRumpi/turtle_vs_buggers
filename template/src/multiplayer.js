@@ -31,7 +31,7 @@ function projectileFind(data) {
 var Multiplayer = cc.Class.extend({
   ctor: function (gameLayer) {
     this._layer = gameLayer;
-    _socket = this.socket = io("ws://localhost:5000");
+    _socket = this.socket = io("ws://obscure-escarpment-8155.herokuapp.com");
     this.socket.on("connect", this.onSocketConnected);
     this.socket.on("id", this.setId);
     if (!this.socket.connected) {
