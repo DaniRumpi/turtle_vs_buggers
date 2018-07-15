@@ -33,8 +33,11 @@ var PlayerSprite = cc.PhysicsSprite.extend({
     this.$shape = new cp.BoxShape(this.$body, this.$width -10, this.$height);
     if (config.remote) {
       this.$shape.setCollisionType(0);
+      this._color = cc.color(100, 100, 150);
+      this.setColor(this._color);
     } else {
       this.$shape.setCollisionType(1);
+      this._color = this.color;
     }
     _layer.space.addBody(this.$body);
     _layer.space.addShape(this.$shape);
@@ -42,7 +45,6 @@ var PlayerSprite = cc.PhysicsSprite.extend({
 
     this.setPosition(this.position);
     this.setRandomRotation(config);
-    this._color = this.color;
     this._colorHurt = cc.color(255,150,150);
     
     this.runningAction = new cc.RepeatForever(new cc.Animate(this.animation));

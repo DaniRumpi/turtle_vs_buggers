@@ -1,12 +1,11 @@
 {
-    "name": "turtle_vs_buggers",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {
-      "socket.io": "~1.0"
+  "name": "turtle_vs_buggers",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "socket.io": "~1.0"
   },
   "engines": {
     "node": "0.12.5"
   }
-
 }

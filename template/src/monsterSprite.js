@@ -73,7 +73,7 @@ var MonsterSprite = cc.PhysicsSprite.extend({
   },
   hurt: function(projectile) {
     --this._health;
-    if (!this._health) {
+    if (!this._health || this._health < 0) {
       this.emitRemoveMonster(projectile);
       this.destroy();
       return true;
@@ -122,6 +122,10 @@ var MonsterSprite = cc.PhysicsSprite.extend({
         this.move = new FollowMovement(this);
       } else if (config.moveType === ATTACK_MOVE) {
         this.move = new AttackMovement(this);
+      } else if (config.moveType === ATTACK_MOVE2) {
+        this.move = new AttackMovement(this, config.follow || 500);
+      } else if (config.moveType === ATTACK_MOVE3) {
+        this.move = new AttackMovement(this, config.follow || 500);
       }
     }
   },

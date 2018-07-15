@@ -36,7 +36,8 @@ var MonstersController = function (GAME, monsters, players) {
     return {x: _posX, y: _posY};
   };
   this.getRandomMonster = function () {
-    var n = Math.round(Math.random() * 2);
+    var n = Math.round(Math.random() * (GAME.MONSTERS.length - 1));
+    console.log(n, GAME.MONSTERS.length, GAME.MONSTERS[n])
     return GAME.MONSTERS[n];
   };
   this.getRandomSpeed = function(speed) {
@@ -112,7 +113,7 @@ var MonstersController = function (GAME, monsters, players) {
         this.calcPositionWalking(this.monsters[i], newDate);
       }
       // ATTACK MODE
-      if (this.monsters[i].moveType === GAME.ATTACK_MOVE) {
+      if (this.monsters[i].moveType.indexOf(GAME.ATTACK_MOVE) >= 0) {
         attack = this.getRandomShoot();
         if (attack) {
           this.monsters[i].attack = attack;

@@ -31,7 +31,7 @@ function projectileFind(data) {
 var Multiplayer = cc.Class.extend({
   ctor: function (gameLayer) {
     this._layer = gameLayer;
-    _socket = this.socket = io("ws://localhost:5000");
+    _socket = this.socket = io("https://turtle-vs-buggers.herokuapp.com");
     this.socket.on("connect", this.onSocketConnected);
     this.socket.on("id", this.setId);
     if (!this.socket.connected) {
@@ -115,7 +115,6 @@ var Multiplayer = cc.Class.extend({
   	removePlayer.removeFromParent();
   },
   onNewMonster: function(data) {
-    console.log("onNewMonster::data_id", this.id);
     // var newMonster = monsterById(data.id);
     // if (newMonster) return;
   	newMonster = new MonsterSprite(getMonsterByMove(data.moveType), {

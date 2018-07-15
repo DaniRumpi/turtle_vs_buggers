@@ -1,5 +1,6 @@
-AttackMovement = function(obj) {
+AttackMovement = function(obj, distFollow) {
   this.obj = obj;
+  this.distFollow = distFollow || 300;
 };
 AttackMovement.prototype.setRandomAim = function () {
   this._aimX = parseInt(cc.random0To1() * (_size.width - this.obj.$width)) + this.obj.$width / 2;
@@ -22,7 +23,7 @@ AttackMovement.prototype.walk = function () {
   var dist = cc.pDistance(aim, pos);
   
   var actionMove, actionMoveDone;
-  if (dist < 300) { // Follow
+  if (dist < this.distFollow) { // Follow
     this.setRotationAim();
     this.shoot(Math.random());
     pAim = cc.p(0, dist);

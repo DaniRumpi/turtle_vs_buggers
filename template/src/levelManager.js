@@ -57,6 +57,7 @@ var LevelManager = cc.Class.extend({
   },
   checkLevel: function() {
     if (this._layer._players.length) {
+      console.log(this._layer._player._targetsDestroyed, this.level.LIMIT_MONSTERS)
       return this._layer._player._targetsDestroyed >= this.level.LIMIT_MONSTERS;
     }
     return false;

@@ -60,7 +60,6 @@ var socket,
 io.on('connection', onSocketConnection);
 // New socket connection
 function onSocketConnection(client) {
-	console.log("New player has connected: " + client.id);
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
@@ -73,11 +72,9 @@ function onSocketConnection(client) {
 }
 
 function onClientDisconnect() {
-  console.log("Player has disconnected: " + this.id);
 	var removePlayer = playerById(this.id);
 	// Player not found
 	if (!removePlayer) {
-		console.log("Player not found: " + this.id);
 		return;
 	}
 	clients -= 1;
@@ -140,7 +137,6 @@ function onMovePlayer(data) {
   var movePlayer = playerById(this.id);
   
   if (!movePlayer) {
-    console.log("Player not found: " + this.id);
     return;
   }
   
@@ -159,7 +155,6 @@ function onMovePlayer(data) {
 function onUpdatePlayerHealth(data) {
   var player = playerById(this.id);
   if (!player) {
-    console.log("Player not found: " + this.id);
     return;
   }
   player.health = parseInt(data.health);
@@ -168,7 +163,6 @@ function onUpdatePlayerHealth(data) {
 function onRemoveMonster(data) {
   var removedMonster = monsterById(data.id);
   if (!removedMonster) {
-    console.log("Monster not found: " + data.id);
     return;
   }
   updatePlayerScore(this.id, GAME.DESTROY);
@@ -183,7 +177,6 @@ function onRemoveMonster(data) {
 function onHurtMonster(data) {
   var hurtMonster = monsterById(data.id);
   if (!hurtMonster) {
-    console.log("Monster not found: " + data.id);
     return;
   }
   updatePlayerScore(this.id, GAME.HURT);
@@ -288,7 +281,6 @@ function removeProjectile(projectile) {
 function updatePlayerScore(id, coef) {
   var player = playerById(id);
   if (!player) {
-    console.log("Player not found: " + this.id);
     return;
   }
   player.score += coef;
